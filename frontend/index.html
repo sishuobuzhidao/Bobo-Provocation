@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>波波挑衅</title>
+</head>
+
+<body>
+    <label>请输入内容：</label>
+    <input type="text" id="boboInput" placeholder="写下挑衅的话...">
+    <button type="submit" id="testButton" onclick="send()">发送</button>
+    <br>
+    <br>
+    <br>
+    <lavel><h2>你是Player1，电脑是Player2</h2></lavel>
+    <button id="Button0" onclick="makeMove(0)">挑衅</button>
+    <button id="Button1" onclick="makeMove(1)">防御</button>
+    <button id="Button2" onclick="makeMove(2)">左避</button>
+    <button id="Button3" onclick="makeMove(3)">右避</button>
+    <button id="Button4" onclick="makeMove(4)">上勾拳</button>
+    <button id="Button5" onclick="makeMove(5)">左勾拳</button>
+    <button id="Button6" onclick="makeMove(6)">右勾拳</button>
+    <button id="Button7" onclick="makeMove(7)">直拳</button>
+    <button id="Button8" onclick="makeMove(8)">反弹</button>
+    <button id="Button9" onclick="makeMove(9)">小猩猩</button>
+    <button id="Button10" onclick="makeMove(10)">双层防御</button>
+    <button id="Button11" onclick="makeMove(11)">冰冻</button>
+    <button id="Button12" onclick="makeMove(12)">大猩猩</button>
+    <button id="Button13" onclick="makeMove(13)">致命一击</button>
+    <button id="Button14" onclick="makeMove(14)">解雇</button>
+
+    <script>
+        let moves = ["挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"];
+
+        function send() {
+            let content = document.getElementById("boboInput").value;
+            alert("即将发送：" + content);
+
+            fetch('http://localhost:8080/api/bobo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ provocation: content }) // 打包成 JSON 发送
+            })
+            .then(response => response.json()) // 等待后端的接招回信json
+            .then(data => {
+                // 3. 把后端的反击弹窗显示出来
+                alert("波波残忍回击：" + data.reply);
+            })
+            .catch(err => {
+                alert("Detected errors in the Java Backend. Please try again.");
+            });
+        }
+
+        function makeMove(moveID) {
+            alert("你选择的招式：" + moves[moveID]);
+
+            fetch('http://localhost:8080/api/analyzeMove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ move: moveID }) // 打包成 JSON 发送
+            })
+            .then(response => response.json()) // 等待后端的接招回信json
+            .then(data => {
+                // 3. 把后端的反击弹窗显示出来
+                alert("电脑本回合出招：" + moves[data.computerMoveID])
+                alert("本回合结果：" + data.roundResult);
+            })
+            .catch(err => {
+                alert("Detected errors in the Java Backend. Please try again.");
+            });
+
+        }
+    </script>
+</body>
+</html>
