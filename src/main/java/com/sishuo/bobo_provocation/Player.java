@@ -167,7 +167,6 @@ public class Player {
 
     public static String updateState(Player p1, Player p2, int firstPlayer, int secondPlayer) {
         System.out.println();
-        System.out.println();
         int[] res = null;
         String result;
         if (p1.getState() == 2) {
@@ -208,6 +207,7 @@ public class Player {
             result += ("\nPlayer2出招: " + secondPlayer + ":" + moves[secondPlayer]);
         }
         System.out.println(result);
+        System.out.println();
         return result;
     }
 
@@ -254,6 +254,39 @@ public class Player {
             System.out.println("Player2 被解雇，还剩" + p2.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");    
             return true;        
         } else {
+            System.out.println("游戏继续");
+            return true;
+        }
+    }
+
+    public static boolean analyzeState(Player p1, Player p2, StringBuilder sb) {
+        // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
+        if (p1.getState() == -1 || p2.getState() == 1) {
+            sb.append("电脑获胜！你输了！再来一局？");
+            System.out.println("Player2 获胜");
+            return false;
+        } else if (p1.getState() == 1 || p2.getState() == -1) {
+            sb.append("恭喜你！你赢了！");
+            System.out.println("Player1 获胜");
+            return false;
+        } else if (p1.getState() == 2) {
+            sb.append("你被电脑冰冻了一回合！下一回合将无法出招。");
+            System.out.println("Player1 被冰冻一回合，下一回合无法出招，游戏继续");
+            return true;
+        } else if (p2.getState() == 2) {
+            sb.append("电脑被你冰冻了一回合！电脑下一回合将无法出招。");  
+            System.out.println("Player2 被冰冻一回合，下一回合无法出招，游戏继续");
+            return true;          
+        } else if (p1.getState() == 3) {
+            sb.append("你被电脑解雇了！从下一回合算起，你只能出防御" + p1.getLayoffRemaining() + "回合了。");   
+            System.out.println("Player1 被解雇，还剩" + p1.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");
+            return true;         
+        } else if (p2.getState() == 3) {
+            sb.append("电脑被你解雇了！从下一回合算起，电脑只能出防御" + p2.getLayoffRemaining() + "回合！");    
+            System.out.println("Player2 被解雇，还剩" + p2.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");
+            return true;        
+        } else {
+            sb.append("无事发生！游戏继续。");
             System.out.println("游戏继续");
             return true;
         }
@@ -341,6 +374,92 @@ public class Player {
         System.out.println();
 
         return 0;
+    }
+
+    // The returning Object[] has one 7-sized array in index 0, one int in index 1 and one ArrayList<Integer> in index 2
+    public StatusDTO showStatus(){
+        available.clear();
+
+        int[] counters = {provocations_accu, provocations_unused, defenses, freeze_counter, lgorilla_counter, critical_counter, layoff_counter};
+        System.out.println("现在状态：累计挑衅: " + provocations_accu);
+        System.out.println("现在状态：未兑换挑衅: " + provocations_unused);
+        System.out.println("现在状态：未兑换防御: " + defenses);
+        System.out.print("冰冻计数器：" + freeze_counter);
+        System.out.print("; 大猩猩计数器：" + lgorilla_counter);
+        System.out.print("; 致命一击计数器：" + critical_counter);
+        System.out.println("; 解雇计数器：" + layoff_counter);
+
+        System.out.println("当前玩家状态码：" + state);
+
+        if (state == 2) {
+            System.out.println("当前被冰冻，无法出招");
+            System.out.println();
+            return new StatusDTO(counters, state, available);
+        } else if (state == 3) {
+            System.out.println("当前被解雇，只能出 1:防御");
+            System.out.println();
+            available.add(1);
+            return new StatusDTO(counters, state, available);
+        }
+
+        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
+             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
+        */
+
+        // ArrayList<Integer> available = new ArrayList<>();
+        available.add(0);
+        available.add(1);
+        available.add(2);
+        available.add(3);
+        available.add(4);
+        available.add(5);
+        available.add(6);
+        
+        if (defenses >= 2) {
+            available.add(10);
+        }
+        if (defenses >= 1) {
+            available.add(8);
+        }
+
+        if (provocations_unused >= 3) {
+            available.add(9);
+        } 
+        if (provocations_unused >= 1) {
+            available.add(7);
+        }
+
+        if (freeze_counter >= 5) {
+            available.add(11);
+        }
+
+        if (lgorilla_counter >= 6) {
+            available.add(12);
+        }
+
+        if (critical_counter >= 7) {
+            available.add(13);
+        }
+
+        if (layoff_counter >= 10) {
+            available.add(14);
+        }
+        
+        available.sort(new Comparator<Integer>() {
+
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1 - o2;
+            }
+            
+        });
+
+        System.out.println("本回合可使用的招法：");
+        for (int i : available) {
+            System.out.print(i + ":" + moves[i] + "; ");
+        }
+
+        return new StatusDTO(counters, 1, available);
     }
 
     public void updateProvocationUnused(int cost) {

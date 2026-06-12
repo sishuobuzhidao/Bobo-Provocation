@@ -9,6 +9,8 @@ import java.util.Random;
 @CrossOrigin(origins = "*") // 🌟 跨域金牌：允许前端网页无阻碍地连上来
 public class BoboController {
 
+    public BoboGame game;
+
     // 1. 这是一个标准的 POST 接口，专门监听 http://localhost:8080/api/bobo
     @PostMapping("/bobo")
     public Map<String, String> handleProvocation(@RequestBody Map<String, String> requestBody) {
@@ -21,7 +23,7 @@ public class BoboController {
         System.out.println("内容是: " + userMessage);
         System.out.println("----------------------------------------\n");
 
-        /* 4. 💡 核心联动枢纽：
+        /* 4. 核心联动枢纽：
            你现在可以在这里直接调用你 App 里的游戏核心逻辑了！
            比如：String boboResponse = App.getBoboReply(userMessage);
            目前我们先写死一个随机嘴臭，用来跟前端调通联调：
@@ -33,28 +35,53 @@ public class BoboController {
     }
 
     @PostMapping("/analyzeMove")
-    public Map<String, String> handleMove(@RequestBody Map<String, String> requestBody) {
+    public StatusDTO handleMove(@RequestBody Map<String, Object> requestBody) {
 
         System.out.println();
-        System.out.println("----------------------------------------");
+        // System.out.println("----------------------------------------");
         // 获取前端传来的数据
-        String message = requestBody.get("move");
-        Integer moveIndex = Integer.parseInt(message);
+        Boolean isGameStarted = Boolean.parseBoolean(requestBody.get("gameStarted").toString());
+        Integer p1move = Integer.parseInt(requestBody.get("move").toString());
         
         // 在后端控制台打印
-        System.out.println("Player1（前端）出招：" + message + ":" + Player.moves[moveIndex]);
+        if (p1move >= 0 && p1move <= 14) {
+            System.out.println("Player1（前端）出招：" + p1move + ":" + Player.moves[p1move]);
+        } else {
+            System.out.println("Player1（前端）本回合没有出招");
+        }
 
-        // 随机出招（暂时0-14随机数）
-        Random r = new Random();
-        int computerMove = r.nextInt(0, 15);
-        System.out.println("Player2（电脑）出招：" + computerMove + ":" + Player.moves[computerMove]);
+        if (!isGameStarted) {
+            // 测试招数对应使用的
+            // 随机出招（暂时0-14随机数）
+            Random r = new Random();
+            int computerMove = r.nextInt(0, 15);
+            System.out.println("Player2（电脑）出招：" + computerMove + ":" + Player.moves[computerMove]);
+            
+            int[] result = Player.calculateState(p1move, computerMove);
+            return new StatusDTO(computerMove, Player.analyzeState(result));
+
+        } else {
+            // isGameStarted = true: 游戏已经开始，不能乱出招
+            // 返回BoboGame类里方法返回的StatusDTO
+            return this.game.startOneNewRound(p1move);
+        }
         
-        int[] result = Player.calculateState(moveIndex, computerMove);
+    }
 
-        // 回给前端
-        return Map.of(
-            "computerMoveID", Integer.valueOf(computerMove).toString(), 
-            "roundResult", Player.analyzeState(result)
-        );
+    @PostMapping("/startGame")
+    public StatusDTO startGame(@RequestBody Map<String, String> requestBody) {
+        System.out.println();
+        System.out.println("----------------------------------------");
+        System.out.println("Player1（前端）目前状态：");
+        // 获取前端传来的数据
+        String message = requestBody.get("startGame");
+
+        if (message.equals("1")) {
+            this.game = new BoboGame();
+            StatusDTO status = this.game.runNewGame();
+            return status;
+        } else {
+            return null;
+        }
     }
 }

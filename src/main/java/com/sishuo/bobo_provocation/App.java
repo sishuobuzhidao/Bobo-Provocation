@@ -84,4 +84,54 @@ public class App {
             }
         }
     }
+
+    public static void runHTMLGame() {
+        // 这里p1是玩家，p2是随即出招的电脑
+        Player p1 = new Player();
+        Player p2 = new Player();
+
+        String movesAndIndices = "0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 | 8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
+        int moveCount = 0;
+
+        p1.reset();
+        p2.reset();
+
+        while(true) {
+            System.out.println("---------------------------------------");
+            moveCount++;
+            System.out.println(movesAndIndices);
+            System.out.println();
+
+            int p1move;
+            int p2move;
+
+            System.out.println("Player1（你）出招: 请输入在可选列表中的 0-14 数字");
+            p1move = p1.makeMove();
+            
+            
+            System.out.println();
+            System.out.println("Player2（电脑）已出招完毕");
+            p2move = p2.makeWeightedMove();
+
+            
+            if (p1move != -1) {
+                p1.analyzeMove(p1move);
+            }
+
+            if (p2move != -1) {
+                p2.analyzeMove(p2move);
+            }
+
+            Player.updateState(p1, p2, p1move, p2move);
+            if (Player.analyzeState(p1, p2)) {
+                System.out.println("输入任意继续：");
+                Player.sc.next();
+                continue;
+            } else {
+                System.out.println("本局一共" + moveCount + "回合！");
+                System.out.println("---------------------------------------");
+                break;
+            }
+        }
+    }
 }

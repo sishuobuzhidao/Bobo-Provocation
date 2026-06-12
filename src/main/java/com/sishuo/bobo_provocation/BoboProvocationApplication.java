@@ -12,6 +12,10 @@ public class BoboProvocationApplication {
 		// App.runGame(2, new Player(), new Player());
 		// System.out.println("Exiting!");
 		// System.exit(0);
+		System.out.println();
+		System.out.println();
+		System.out.println("Waiting for frontend users to post messages...");
+		System.out.println();
 	}
 
 }
