@@ -17,8 +17,6 @@
             <div class="panel p1-panel">
                 <h3>你 (Player 1)</h3>
                 <div class="status-badge" id="p1-status">准备就绪</div>
-                <div class="counters-grid" id="p1-counters">
-                    </div>
             </div>
             
             <div class="vs-sign">VS</div>
@@ -26,20 +24,15 @@
             <div class="panel p2-panel">
                 <h3>电脑 (Player 2)</h3>
                 <div class="status-badge" id="p2-status">准备就绪</div>
-                <div class="counters-grid" id="p2-counters">
-                    </div>
             </div>
         </div>
 
-        <!-- <div class="bobo-reveal">
-            <div class="reveal-row">
-                <div>你的选择：<span id="p1-action-billboard">❓</span></div>
-                <div class="vs-small">⚡</div>
-                <div>电脑出招：<span id="bobo-action-billboard">❓</span></div>
-            </div>
-        </div> -->
         <div class="bobo-reveal">
-            <h4>电脑出招：波波 —— <span id="bobo-action-billboard">❓</span></h4>
+            <div class="reveal-row">
+                <div>你的选择：<span class = "action-billboard" id="p1-action-billboard">❓</span></div>
+                <div class="vs-small">⚡</div>
+                <div>电脑出招：<span class = "action-billboard" id="p2-action-billboard">❓</span></div>
+            </div>
         </div>
 
         <div class="battle-log-screen">
@@ -49,21 +42,21 @@
     
     <h2>选择你的招式！</h2>
     <div class="btn-row">
-        <button id="Button0" class="move-btn btn-provoke" onclick="makeMove(0)" disabled>挑衅</button>
-        <button id="Button1" class="move-btn btn-defend" onclick="makeMove(1)" disabled>防御</button>
         <button id="Button2" class="move-btn btn-dodge" onclick="makeMove(2)" disabled>左避</button>
+        <button id="Button0" class="move-btn" onclick="makeMove(0)" disabled>挑衅</button>
+        <button id="Button1" class="move-btn" onclick="makeMove(1)" disabled>防御</button>
         <button id="Button3" class="move-btn btn-dodge" onclick="makeMove(3)" disabled>右避</button>
     </div>
 
     <div class="btn-row">
-        <button id="Button4" class="move-btn btn-punch" onclick="makeMove(4)" disabled>上勾拳</button>
         <button id="Button5" class="move-btn btn-punch" onclick="makeMove(5)" disabled>左勾拳</button>
-        <button id="Button6" class="move-btn btn-punch" onclick="makeMove(6)" disabled>右勾拳</button>
         <button id="Button7" class="move-btn btn-punch" onclick="makeMove(7)" disabled>直拳</button>
+        <button id="Button4" class="move-btn btn-punch" onclick="makeMove(4)" disabled>上勾拳</button>
+        <button id="Button6" class="move-btn btn-punch" onclick="makeMove(6)" disabled>右勾拳</button>
     </div>
 
     <div class="btn-row">
-        <button id="Button8" class="move-btn btn-counter" onclick="makeMove(8)" disabled>反弹</button>
+        <button id="Button8" class="move-btn btn-special" onclick="makeMove(8)" disabled>反弹</button>
         <button id="Button9" class="move-btn btn-special" onclick="makeMove(9)" disabled>小猩猩</button>
         <button id="Button10" class="move-btn btn-special" onclick="makeMove(10)" disabled>双层防御</button>
     </div>

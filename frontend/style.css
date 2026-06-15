@@ -44,10 +44,8 @@ h2 { margin-top: 15px; color: #2c3e50; font-size: 18px; }
 
 /* 招式按钮*/
 .move-btn {
-    width: 110px;
-    height: 50px;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 16px;
     cursor: pointer;
     border: 2px solid #bdc3c7;
     border-radius: 8px;
@@ -73,29 +71,33 @@ button:disabled {
 }
 
 /* 🌟 美工自定义图层区（等你有图了，把下面的颜色换成 background-image: url('xxx.png') 即可！） */
-.btn-provoke { border-color: #f1c40f; color: #d35400; }
-.btn-defend { border-color: #3498db; color: #2980b9; }
-.btn-punch { border-color: #e67e22; color: #d35400; }
-.btn-counter { border-color: #9b59b6; color: #8e44ad; }
-.btn-special { height: 55px; border-color: #e74c3c; background-color: #fff9f8; }
-.btn-ultimate { height: 59px; border-color: #c0392b; background-color: #fdedec; font-size: 14px; }
-.btn-illegal { height: 63px; border-color: #111; background-color: #eaeded; font-size: 15px;}
+#Button0 { width: 280px; height: 100px; font-size: 25px; border-color: #f1c40f; color: #d35400; }
+#Button1 { width: 90px; height: 100px; font-size: 20px; border-color: #3498db; color: #2980b9; }
+.btn-dodge { width: 70px; height: 100px; }
+.btn-punch { width: 70px; height: 65px; border-color: #e67e22; color: #d35400; }
+#Button4 { width: 90px; font-size: 17px}
+#Button7 { width: 280px; font-size: 19px; }
+#Button8 { border-color: #9b59b6; color: #8e44ad; }
+.btn-special { width: 175px; height: 60px; border-color: #e74c3c; background-color: #fff9f8; font-size: 18px}
+.btn-ultimate { width: 130px; height: 70px; border-color: #c0392b; background-color: #fdedec; font-size: 19px; }
+.btn-illegal { width: 140px; height: 70px; border-color: #111; background-color: #eaeded; font-size: 20px;}
 
 /* 看板综合区 */
 .game-dashboard {
     width: 600px;
-    height: 360px;
+    height: 300px;
     background: #2c3e50;
     color: #ecf0f1;
-    padding: 18px;
+    padding: 15px;
     border-radius: 12px;
     margin-bottom: 15px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-
-    display: flex;
+    
+    /* 垂直弹性分布：让状态、亮招、日志完美平分这 320px */
+    display: flex;         
     flex-direction: column;
     justify-content: space-between; 
-    box-sizing: border-box; /* 极其重要：防止 padding 撑大盒子 */
+    box-sizing: border-box; 
 }
 
 .player-panels { 
@@ -106,12 +108,9 @@ button:disabled {
 }
 .panel { 
     width: 45%; 
-    height: 190px;
     background: #34495e; 
     padding: 10px; 
     border-radius: 8px; 
-    
-    /* 🎯 核心改动 2：开启 flex 并设置居中，让盒子里面的所有人强制居中对齐 */
     display: flex;
     flex-direction: column;
     align-items: center; 
@@ -126,7 +125,7 @@ button:disabled {
     border-radius: 4px; 
     font-size: 11px; 
     font-weight: bold; 
-    margin-bottom: 10px; 
+    margin-bottom: 8px; 
     width: fit-content;    /* 确保宽度紧贴文字，配合居中 */
 }
 .counters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; font-size: 11px; text-align: left; }
@@ -136,7 +135,7 @@ button:disabled {
 
 .bobo-reveal { background: #1a252f; text-align: center; padding: 6px; border-radius: 6px; margin-bottom: 12px; border: 1px dashed #f1c40f; }
 .bobo-reveal h4 { margin: 3px 0; font-size: 14px; }
-#bobo-action-billboard { color: #e67e22; font-size: 15px; font-weight: bold; }
+.action-billboard { color: #e67e22; font-size: 15px; font-weight: bold; }
 
 /* 荧光绿黑客屏日志 */
 .battle-log-screen {
