@@ -2,282 +2,79 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>波波挑衅</title>
-    <style>
-        /* 全局硬核格斗居中皮肤 */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f9fa;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* 核心：让所有子元素在网页水平方向绝对居中 */
-            padding: 30px;
-            margin: 0;
-        }
-
-        /* 标题样式 */
-        h1 {
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-
-        h2 {
-            margin-top: 5px;
-            color: #7f8c8d;
-        }
-
-        /* 开始游戏大按钮 */
-        #start {
-            width: 140px;
-            height: 45px;
-            background-color: #4caf50;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 15px 0;
-            transition: all 0.2s;
-        }
-        #start:hover {
-            background-color: #43a047;
-        }
-
-        /* 按钮行容器：让每一行的按钮都横向居中排布 */
-        .btn-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;          /* 按钮之间的间距 */
-            margin-bottom: 15px; /* 行与行之间的间距 */
-            width: 100%;
-        }
-
-        /* 基础按钮通用样式（第一、二行及第三行普通按钮） */
-        button:not(#start) {
-            width: 90px;
-            height: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-            background-color: #ffffff;
-            transition: all 0.2s;
-        }
-        button:not(#start):hover {
-            background-color: #e1e8ed;
-        }
-
-        /* 大按钮样式（第三行的大招） */
-        .btn-large {
-            width: 130px !important;
-            height: 45px !important;
-            background-color: #f39c12 !important; /* 橙色代表强力 */
-            color: white !important;
-            border: none !important;
-        }
-
-        /* 终极大按钮样式（第四行的终极大招） */
-        .btn-huge {
-            width: 150px !important;
-            height: 55px !important;
-            background-color: #c0392b !important; /* 深红代表致命 */
-            color: white !important;
-            font-size: 15px !important;
-            border: none !important;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.15);
-        }
-
-        /* 封印状态变暗 */
-        button:disabled {
-            background-color: #e0e0e0 !important;
-            color: #a0a0a0 !important;
-            cursor: not-allowed !important;
-            box-shadow: none !important;
-            border: 1px solid #ccc !important;
-        }
-    </style>
+    <title>波波挑衅 Bobo Provocation</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>波波挑衅 Bobo Provocation</h1>
+    <h1>💥 波波挑衅！ 💥</h1>
+    <p class="subtitle">口诀：波！波！—— 出招！</p>
     
-    <button id="start" onclick="startGame()">点击开始游戏</button>
+    <button id="start" onclick="startGame()">开始游戏</button>
     
-    <h2>你是 Player1，电脑是 Player2</h2>
+    <div class="game-dashboard">
+        <div class="player-panels">
+            <div class="panel p1-panel">
+                <h3>你 (Player 1)</h3>
+                <div class="status-badge" id="p1-status">准备就绪</div>
+                <div class="counters-grid" id="p1-counters">
+                    </div>
+            </div>
+            
+            <div class="vs-sign">VS</div>
+            
+            <div class="panel p2-panel">
+                <h3>电脑 (Player 2)</h3>
+                <div class="status-badge" id="p2-status">准备就绪</div>
+                <div class="counters-grid" id="p2-counters">
+                    </div>
+            </div>
+        </div>
+
+        <!-- <div class="bobo-reveal">
+            <div class="reveal-row">
+                <div>你的选择：<span id="p1-action-billboard">❓</span></div>
+                <div class="vs-small">⚡</div>
+                <div>电脑出招：<span id="bobo-action-billboard">❓</span></div>
+            </div>
+        </div> -->
+        <div class="bobo-reveal">
+            <h4>电脑出招：波波 —— <span id="bobo-action-billboard">❓</span></h4>
+        </div>
+
+        <div class="battle-log-screen">
+            <div id="battle-log-text">拍手两下，喊出“波波”，然后同时出招！</div>
+        </div>
+    </div>
     
-    <br> <div class="btn-row">
-        <button id="Button0" class="move-btn" onclick="makeMove(0)" disabled>挑衅</button>
-        <button id="Button1" class="move-btn" onclick="makeMove(1)" disabled>防御</button>
-        <button id="Button2" class="move-btn" onclick="makeMove(2)" disabled>左避</button>
-        <button id="Button3" class="move-btn" onclick="makeMove(3)" disabled>右避</button>
+    <h2>选择你的招式！</h2>
+    <div class="btn-row">
+        <button id="Button0" class="move-btn btn-provoke" onclick="makeMove(0)" disabled>挑衅</button>
+        <button id="Button1" class="move-btn btn-defend" onclick="makeMove(1)" disabled>防御</button>
+        <button id="Button2" class="move-btn btn-dodge" onclick="makeMove(2)" disabled>左避</button>
+        <button id="Button3" class="move-btn btn-dodge" onclick="makeMove(3)" disabled>右避</button>
     </div>
 
     <div class="btn-row">
-        <button id="Button5" class="move-btn" onclick="makeMove(5)" disabled>左勾拳</button>
-        <button id="Button4" class="move-btn" onclick="makeMove(4)" disabled>上勾拳</button>
-        <button id="Button6" class="move-btn" onclick="makeMove(6)" disabled>右勾拳</button>
+        <button id="Button4" class="move-btn btn-punch" onclick="makeMove(4)" disabled>上勾拳</button>
+        <button id="Button5" class="move-btn btn-punch" onclick="makeMove(5)" disabled>左勾拳</button>
+        <button id="Button6" class="move-btn btn-punch" onclick="makeMove(6)" disabled>右勾拳</button>
+        <button id="Button7" class="move-btn btn-punch" onclick="makeMove(7)" disabled>直拳</button>
     </div>
 
     <div class="btn-row">
-        <button id="Button7" class="move-btn" onclick="makeMove(7)" disabled>直拳</button>
-        <button id="Button8" class="move-btn" onclick="makeMove(8)" disabled>反弹</button>
-        <button id="Button9" class="move-btn btn-large" onclick="makeMove(9)" disabled>小猩猩</button>
-        <button id="Button10" class="move-btn btn-large" onclick="makeMove(10)" disabled>双层防御</button>
+        <button id="Button8" class="move-btn btn-counter" onclick="makeMove(8)" disabled>反弹</button>
+        <button id="Button9" class="move-btn btn-special" onclick="makeMove(9)" disabled>小猩猩</button>
+        <button id="Button10" class="move-btn btn-special" onclick="makeMove(10)" disabled>双层防御</button>
     </div>
 
     <div class="btn-row">
-        <button id="Button11" class="move-btn btn-huge" onclick="makeMove(11)" disabled>冰冻</button>
-        <button id="Button12" class="move-btn btn-huge" onclick="makeMove(12)" disabled>大猩猩</button>
-        <button id="Button13" class="move-btn btn-huge" onclick="makeMove(13)" disabled>致命一击</button>
-        <button id="Button14" class="move-btn btn-huge" onclick="makeMove(14)" disabled>解雇</button>
+        <button id="Button11" class="move-btn btn-ultimate" onclick="makeMove(11)" disabled>冰冻</button>
+        <button id="Button12" class="move-btn btn-ultimate" onclick="makeMove(12)" disabled>大猩猩</button>
+        <button id="Button13" class="move-btn btn-ultimate" onclick="makeMove(13)" disabled>致命一击</button>
+        <button id="Button14" class="move-btn btn-illegal" onclick="makeMove(14)" disabled>解雇</button>
     </div>
 
-    <script>
-        let isGameStarted = false;
-        let moves = ["挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"];
-
-        /* function send() {
-            let content = document.getElementById("boboInput").value;
-            alert("即将发送：" + content);
-
-            fetch('http://localhost:8080/api/bobo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ provocation: content }) // 打包成 JSON 发送
-            })
-            .then(response => response.json()) // 等待后端的接招回信json
-            .then(data => {
-                // 3. 把后端的反击弹窗显示出来
-                alert("波波残忍回击：" + data.reply);
-            })
-            .catch(err => {
-                alert("Detected errors in the Java Backend. Please try again.");
-            });
-        } */
-
-        // 开始游戏
-        function startGame() {
-            fetch('http://localhost:8080/api/startGame', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ startGame : 1 })
-            })
-            .then(response => response.json()) // 等待后端的接招回信json
-            .then(data => {
-                // 如果后端回复OK就开始游戏
-                if (data != null) {
-                    if (data.statusCode == 2) {
-                        // Impossible since the game JUST started
-                        alert("当前被冰冻，无法出招！");
-                    } else if (data.statusCode == 3) {
-                        // Impossible since the game JUST started
-                        alert("当前被解雇，只能出防御！");
-                        document.getElementById("Button1").disabled = false;
-                    } else {
-                        alert("游戏开始！")
-                        document.getElementById("start").disabled = true;
-                        isGameStarted = true;
-                        disableAllButtons();
-                        enableButtons(data.availableMoves);
-                    }
-                } else {
-                    alert("Unknown Error occurred. Please try again.")
-                }
-            })
-            .catch(err => {
-                alert("Detected errors in the Java Backend. Please try again.");
-            });
-        }
-
-        // 玩家点击按钮，根据按钮ID不同，调用不同参数交给后端
-        function makeMove(moveID) {
-            if (moveID >= 0 && moveID <= 14) {
-                alert("你选择的招式：" + moves[moveID]);
-            }
-
-            let requestBody = {
-                gameStarted: isGameStarted,
-                move: moveID
-            };
-
-            disableAllButtons(); // 防止玩家多次点击
-
-            fetch('http://localhost:8080/api/analyzeMove', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody) // 打包成 JSON 发送
-            })
-            .then(response => response.json()) // 等待后端的接招回信json
-            .then(data => {
-                // data源自StatusDTO类，有六个参数
-                // int[] counters, int statusCode, ArrayList<Integer> availableMoves, 
-                // int p2moveID, String roundResult, boolean shouldContinue
-
-                if (data.p2moveID != -1) {
-                    alert("电脑本回合出招：" + moves[data.p2moveID])
-                } else {
-                    alert("电脑本回合被你冰冻，没有出招")
-                }
-                alert("本回合结果：" + data.roundResult);
-
-                // 判断游戏是否继续
-                if (data.shouldContinue === true) {
-                    // 游戏继续
-                    if (data.statusCode === 2) {
-                        // 如果下一回合我方被冰冻，直接弹出提示，并允许玩家点【确定】后直接向后端发送空过请求
-                        alert("下一回合你将被冰冻！点击确定将空过该回合。");
-                        makeMove(-1); // 这里在弹窗点击确定后合理触发一次空过
-                    } else {
-                        // 正常回合，根据后端计算好的合法列表亮起按钮
-                        enableButtons(data.availableMoves);
-                        alert("请继续出招");
-                    }
-                } else {
-                    // 游戏分出胜负，结束了
-                    alert("游戏结束！");
-                    disableAllButtons();
-                    document.getElementById("start").disabled = false;
-                    isGameStarted = false;
-                }
-            })
-            .catch(err => {
-                alert("Detected errors in the Java Backend. Please try again.");
-            });
-
-        }
-        
-        // enable all buttons with id inside the ArrayList<Integer> availableMoves 
-        // (returned from backend)
-        function enableButtons(availableMoves) {
-            if (availableMoves == null) {
-                return;
-            }
-            // JS enhanced-for -> for (let name of list) {}
-            for (let id of availableMoves) {
-                if (id >= 0 && id <= 14) {
-                    document.getElementById("Button" + id).disabled = false;
-                }
-            }
-        }
-
-        // enable all 15 buttons
-        function enableAllButtons() {
-            for (let index = 0; index < 15; index++) {
-                document.getElementById("Button" + index).disabled = false;                
-            }
-        }
-
-        // disable all 15 buttons
-        function disableAllButtons() {
-            for (let index = 0; index < 15; index++) {
-                document.getElementById("Button" + index).disabled = true;                
-            }
-        }
-
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>
