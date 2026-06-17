@@ -2,8 +2,6 @@
     Altered by sishuo
 */
 
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css');
-
 body {
     /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
     font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -47,7 +45,7 @@ body {
     margin-top: 0;
     margin-bottom: 20px;       /* 顺滑推开底下的开始游戏按钮 */
     font-style: italic; 
-    color: #7f8c8d; 
+    color: #4a3728; 
     font-size: 17px;
     transform: rotate(10deg);
 }
@@ -112,108 +110,115 @@ body {
 .move-btn:hover:not(:disabled) {
     /* transform: translateY(-2px); */
     /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
-    border: 4px solid #0a0a0b;
+    border: 4px solid #4a3728;
     border-radius: 8px;
 }
 .move-btn:active:not(:disabled) { transform: translateY(0); }
 
 button:disabled {
-    background-color: #e0e0e0 !important;
-    color: #a0a0a0 !important;
+    background-color: #d4c5a0 !important;
+    color: #8b7355 !important;
     cursor: not-allowed !important;
-    border-color: #ccc !important;
+    border-color: #b8a890 !important;
     transform: none !important;
     box-shadow: none !important;
 }
 
-/* 招式大小及颜色重构（从大括号幽灵中解放出来） */
-#Button0 { width: 280px; height: 100px; font-size: 25px; border-color: #f1c40f; color: #d35400; background-color: #f4edce;}
-#Button1 { width: 90px; height: 100px; font-size: 20px; border-color: #3498db; color: #2980b9; background-color: #aecde2}
-.btn-dodge { width: 70px; height: 100px; }
-.btn-punch { width: 70px; height: 65px; border-color: #e67e22; color: #d35400; }
-#Button4 { width: 90px; font-size: 17px; }
-#Button7 { width: 280px; font-size: 19px; }
-#Button8 { border-color: #9b59b6; color: #8e44ad; }
-.btn-special { width: 175px; height: 60px; border-color: #e74c3c; background-color: #fff9f8; font-size: 18px; }
-#Button11 { background-color: #6fd8c8; }
-#Button12 { background-color: #700000; color: #de7474}
-#Button13 { background-color: #a450d1; color: rgb(77, 28, 77)}
-.btn-ultimate { width: 130px; height: 70px; border-color: #010101; font-size: 19px; }
-.btn-ultimate:hover { transform: scale(1.1);}
-.btn-illegal { width: 140px; height: 70px; border-color: #111; background-color: #3b3b3b; font-size: 20px; color: white}
+
+/* 基础 — 米白底深棕字（挑衅/防御/闪避） */
+#Button0 { width: 280px; height: 100px; font-size: 25px; background-color: #f5efe0; color: #5c4033; border-color: #c4b59a; }
+#Button1 { width: 90px;  height: 100px; font-size: 20px; background-color: #f5efe0; color: #5c4033; border-color: #c4b59a; }
+.btn-dodge { width: 70px; height: 100px; background-color: #f5efe0; color: #5c4033; border-color: #c4b59a; }
+
+/* 攻击 — 暖橙底深棕字（勾拳/直拳/反弹） */
+.btn-punch { width: 70px; height: 65px; background-color: #f5e6d0; color: #8b4513; border-color: #d4a574; }
+#Button4 { width: 90px; font-size: 17px; background-color: #f5e6d0; color: #8b4513; border-color: #d4a574; }
+#Button7 { width: 280px; font-size: 19px; background-color: #f5e6d0; color: #8b4513; border-color: #d4a574; }
+#Button8 { background-color: #b33939; color: #fff; border-color: #7a1a1a; }
+
+/* 中级 — 暗红底白字（小猩猩/双层防御/反弹） */
+.btn-special { width: 175px; height: 60px; background-color: #b33939; color: #fff; border-color: #7a1a1a; font-size: 18px; }
+
+/* 终极 — 深黑底白字 + 左色条区分（冰冻/大猩猩/致命/解雇） */
+.btn-ultimate, .btn-illegal {
+    background-color: #3a2a1a;
+    color: #fff;
+    border: 2px solid #444;
+}
+.btn-ultimate { width: 130px; height: 70px; font-size: 19px; }
+.btn-ultimate:hover { transform: scale(1.1); }
+.btn-illegal { width: 140px; height: 70px; font-size: 20px; }
 .btn-illegal:hover { transform: scale(1.15); }
 
+#Button11 { border: 2px solid #5c7cfa; }
+#Button12 { border: 2px solid #ff4444; }
+#Button13 { border: 2px solid #b56ce0; }
+#Button14 { background-color: #1a1a1a; border: 3px solid #000; }
 
-/* 看板综合区 */
+
+/* 看板 */
 .game-dashboard {
     width: 600px;
     height: 300px;
-    background: #adadad;
-    color: #ecf0f1;
+    background: #4a3728;
+    color: #e8e0d5;
     padding: 15px;
     margin-bottom: 30px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-    
-    display: flex;         
-    flex-direction: column;
-    justify-content: space-between; 
-    box-sizing: border-box; 
-}
-
-.player-panels { 
-    display: flex; 
-    justify-content: space-between; 
-    margin-bottom: 12px; 
-    align-items: stretch;   
-}
-.panel { 
-    width: 44%; 
-    background: #323332; 
-    padding: 10px; 
-    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    text-align: center; 
+    justify-content: space-between;
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+.player-panels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    align-items: stretch;
+}
+.panel {
+    width: 44%;
+    background: #3a2a1a;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid #5c4033;
 }
 .panel h3 { margin: 0 0 8px 0; font-size: 15px; color: #f1c40f; }
 
-.status-badge { 
-    display: inline-block; 
-    padding: 2px 8px; 
-    background: #27ae60; 
-    border-radius: 4px; 
-    font-size: 11px; 
-    font-weight: bold; 
-    margin-bottom: 8px; 
-    width: fit-content;    
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #c0392b;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    width: fit-content;
 }
 
-/* .counters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; font-size: 11px; text-align: left; }
-.counter-item { background: rgba(0,0,0,0.2); padding: 5px 7px; border-radius: 3px; font-size: 13px; } */
+.vs-sign { font-size: 20px; font-weight: bold; color: #c0392b; align-self: center; }
 
-.vs-sign { font-size: 20px; font-weight: bold; color: #f01a03; align-self: center; }
+.bobo-reveal { background: #3a2a1a; text-align: center; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
+.reveal-row { display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 16px; color: #e8e0d5; }
+.vs-small { color: #c0392b; font-weight: bold; }
+.action-billboard { color: #f1c40f; font-size: 16px; font-weight: bold; }
 
-.bobo-reveal { background: #3c3f42; text-align: center; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
-.reveal-row { display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 16px; }
-.vs-small { color: #e74c3c; font-weight: bold; }
-.action-billboard { color: #e67e22; font-size: 16px; font-weight: bold; }
-
-/* 荧光绿黑客屏日志 */
 .battle-log-screen {
-    background: #111;
-    color: #2ecc71;
+    background: #1a0f07;
+    color: #e8e0d5;
     font-family: 'Courier New', Courier, monospace;
     padding: 10px;
     height: 65px;
     overflow-y: auto;
     border-radius: 6px;
-    border-left: 5px solid #2ecc71;
+    border-left: 5px solid #c0392b;
     font-size: 15px;
     line-height: 1.4;
-}
-
-.buttons-container {
-    width: 600px;
-    /* 🎯 移除多余的嵌套大括号，让下文恢复自由 */
 }
