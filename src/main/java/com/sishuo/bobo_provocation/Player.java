@@ -27,6 +27,10 @@ public class Player {
     public static String[] moves = {"挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"};
     private static int[] moveWeights = {10, 9, 4, 4, 5, 1, 1, 12, 10, 25, 20, 50, 100, 200, 1000};
 
+    private static String[] failMessages = {"电脑获胜！你输了！再来一局？", "电脑赢了！祝您下次好运！", "你输了！游戏结束！", "很抱歉，你输了！再来一局？"};
+    private static String[] normalMessages = {"无事发生，游戏继续。", "游戏仍在继续...", "游戏仍胜负未分!", "游戏继续，请选择你的招法。"};
+    private static String[] winMessages = {"游戏结束！恭喜你，你赢了！", "恭喜你在这局游戏中取得胜利！", "恭喜，你赢了！再来一局？", "你成功打败了电脑！恭喜！"};
+
     static {
         // 前两个索引对应 1号玩家 和 2号玩家 的招法 (0-14)
         // 返回的数组：index 0 是1号玩家状态码，index 1 是2号玩家状态码
@@ -262,11 +266,11 @@ public class Player {
     public static boolean analyzeState(Player p1, Player p2, StringBuilder sb) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
         if (p1.getState() == -1 || p2.getState() == 1) {
-            sb.append("电脑获胜！你输了！再来一局？");
+            sb.append(getRandomMessage(-1));
             System.out.println("Player2 获胜");
             return false;
         } else if (p1.getState() == 1 || p2.getState() == -1) {
-            sb.append("恭喜你！你赢了！");
+            sb.append(getRandomMessage(1));
             System.out.println("Player1 获胜");
             return false;
         } else if (p1.getState() == 2) {
@@ -286,7 +290,7 @@ public class Player {
             System.out.println("Player2 被解雇，还剩" + p2.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");
             return true;        
         } else {
-            sb.append("无事发生！游戏继续。");
+            sb.append(getRandomMessage(0));
             System.out.println("游戏继续");
             return true;
         }
@@ -593,6 +597,22 @@ public class Player {
             }
 
             return available.get(index);
+        }
+    }
+
+    public static String getRandomMessage(int type) {
+        Random r = new Random();
+        int index = r.nextInt(4);
+        switch (type){
+            case -1: {
+                return failMessages[index];
+            } case 0: {
+                return normalMessages[index];
+            } case 1: {
+                return winMessages[index];
+            } default: {
+                return "";
+            }
         }
     }
 }

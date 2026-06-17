@@ -13,21 +13,20 @@ function startGame() {
     .then(response => response.json())
     .then(data => {
         if (data != null) {
-            document.getElementById("battle-log-text").innerText = "📢 【第一回合】 双方大喊：‘波！波！’ 自动打出波波挑衅蓄力！";
+            document.getElementById("battle-log-text").innerText = "请选择你第一回合的招式。";
             document.getElementById("p1-action-billboard").innerText = "等候选择...";
             document.getElementById("p2-action-billboard").innerText = "等候出招...";
             document.getElementById("start").disabled = true;
             isGameStarted = true;
             
-            document.getElementById("p1-status").innerText = "正常";
-            document.getElementById("p1-status").style.backgroundColor = "#27ae60";
-            
+            document.getElementById("p1-status").innerText = "对局中";
+            document.getElementById("p2-status").innerText = "对局中";            
             disableAllButtons();
             enableButtons(data.availableMoves);
         }
     })
     .catch(err => {
-        document.getElementById("battle-log-text").innerText = "💥 无法连接到后端，请确保 Spring Boot 已启动。";
+        document.getElementById("battle-log-text").innerText = "无法连接到后端，请确保 Spring Boot 已启动。";
     });
 }
 
@@ -91,15 +90,17 @@ function makeMove(moveID) {
             }
         } else {
             // 胜负已分
-            document.getElementById("battle-log-text").innerText = `🏁 游戏结束！${data.roundResult}`;
+            document.getElementById("battle-log-text").innerText = `${data.roundResult}`;
             disableAllButtons();
             document.getElementById("start").disabled = false;
+            document.getElementById("p1-status").innerText = "准备就绪";
+            document.getElementById("p2-status").innerText = "准备就绪";            
             isGameStarted = false;
         }
     })
     .catch(err => {
         console.error(err);
-        document.getElementById("battle-log-text").innerText = "💥 运行时数据传输崩溃，请检查后端报错日志。";
+        document.getElementById("battle-log-text").innerText = "运行时数据传输崩溃，请检查后端报错日志。";
     });
 }
 
@@ -119,3 +120,5 @@ function disableAllButtons() {
         document.getElementById("Button" + index).disabled = true;                
     }
 }
+
+// enableButtons([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]); // 测试前端颜色用
