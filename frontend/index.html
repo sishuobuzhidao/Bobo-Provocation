@@ -10,7 +10,10 @@
     <div class="title">
         <h1>波波挑衅</h1>
         <p class="subtitle">Created by sishuo</p>
-        <button id="start" onclick="startGame()">开始游戏</button>
+        <div class="start-row">
+            <button id="mode-toggle" onclick="toggleMode()">普通模式</button>
+            <button id="start" onclick="startGame()">开始游戏</button>
+        </div>
     </div>
     
     <div class="main-game-container">
@@ -31,14 +34,14 @@
 
             <div class="bobo-reveal">
                 <div class="reveal-row">
-                    <div>你的选择->   <span class = "action-billboard" id="p1-action-billboard">❓</span></div>
+                    <div>你的选择->   <span class = "action-billboard" id="p1-action-billboard"> ? </span></div>
                     <div class="vs-small">||</div>
-                    <div><span class = "action-billboard" id="p2-action-billboard">❓</span>   <-电脑出招</div>
+                    <div><span class = "action-billboard" id="p2-action-billboard"> ? </span>   <-电脑出招</div>
                 </div>
             </div>
 
             <div class="battle-log-screen">
-                <div id="battle-log-text">拍手两下，喊出“波波”，然后同时出招！</div>
+                <div id="battle-log-text">欢迎来到"波波挑衅"！点击按钮即可开始游戏！</div>
             </div>
         </div>
 

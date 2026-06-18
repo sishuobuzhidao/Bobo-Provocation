@@ -128,6 +128,10 @@ public class Player {
         this.state = state;
     }
 
+    public ArrayList<Integer> getAvailableMovesArray() {
+        return this.available;
+    }
+
     public void setLayoff() {
         this.state = 3;
         this.layoff_remaining_moves = 5;
@@ -556,12 +560,16 @@ public class Player {
         }
     }
 
-    public int makeRandomMove() {
-        int moving = this.showAvailableMoves();
-        // moving == 2 被冰冻； moving == 3 被解雇        
-        if (moving == 2) {
+    public int makeRandomMove(boolean show) {
+        if (show) {
+            // If show == true, then the status has not been printed to backend
+            // If show == false, this.state & this.available are updated, no need to update again
+            this.showAvailableMoves();
+        }
+        // state == 2 被冰冻； state == 3 被解雇        
+        if (state == 2) {
             return -1;
-        } else if (moving == 3) {
+        } else if (state == 3) {
             minusOneLayoff();
             return 1;
         } else {

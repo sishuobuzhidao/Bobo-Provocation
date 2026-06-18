@@ -11,7 +11,7 @@ public class BoboGame {
         this.moveCount = 0;
     }
 
-    public StatusDTO runNewGame() {
+    public StatusDTO runNewGame(boolean isUltraHardModeOn) {
         // 这里p1是玩家，p2是随机出招的电脑
         // String movesAndIndices = "0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 | 8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
         this.moveCount = 0;
@@ -22,12 +22,25 @@ public class BoboGame {
         return status;
     }
 
-    public StatusDTO startOneNewRound(int p1move) {
+    public StatusDTO startOneNewRound(int p1move, boolean isUltraHardModeOn) {
         System.out.println();
         this.moveCount++;
 
-        // 前端出招已经在BoboController类打印过
+        if (p1move >= 0 && p1move <= 14) {
+            // ultra hard mode is not on
+            System.out.println("Player1（前端）出招：" + p1move + ":" + Player.moves[p1move]);
 
+            if (isUltraHardModeOn && !p1.getAvailableMovesArray().contains(p1move)) {
+                // 困难模式下玩家选择了不合法招式
+                p1move = p1.makeRandomMove(false);
+                System.out.println("检测到选择招式不合法，已使用随机合法招式替换。");
+                System.out.println("招式被替换为：" + p1move + ":" + Player.moves[p1move]);
+            }
+        } else {
+            System.out.println("Player1（前端）本回合没有出招");
+        }
+
+        System.out.println();
         System.out.println("Player2（电脑）目前状态：");
         int p2move = p2.makeWeightedMove();
         // int p2move = p2.makeMove(); for testing (manual input)
@@ -55,13 +68,14 @@ public class BoboGame {
             // 游戏分出胜负结束
             System.out.println("本局一共" + moveCount + "回合！");
             System.out.println("---------------------------------------");
-            return new StatusDTO(null, -1, null, p2move, sb.toString(), false);
+            return new StatusDTO(null, -1, null, p1move, p2move, sb.toString(), false);
         }
 
         // 判断完成后，为下一回合做准备
         System.out.println("---------------------------------------");
         System.out.println("Player1（前端）目前状态：");
         StatusDTO newStatus = p1.showStatus();
+        newStatus.setP1moveID(p1move);
         newStatus.setP2moveID(p2move);
         newStatus.setRoundResult(sb.toString());
         newStatus.setShouldContinue(shouldContinue);

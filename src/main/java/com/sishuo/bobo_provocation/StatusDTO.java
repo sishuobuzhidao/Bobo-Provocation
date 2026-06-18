@@ -9,6 +9,7 @@ public class StatusDTO {
     private int statusCode; // statusCode = 1 or 2 or 3; 1 = normal; 2 = freezed; 3 = layoffed
     private ArrayList<Integer> availableMoves;
 
+    private int p1moveID;
     private int p2moveID;
     private String roundResult;
     private boolean shouldContinue;
@@ -17,6 +18,7 @@ public class StatusDTO {
         this.counters = null;
         this.statusCode = -1;
         this.availableMoves = null;
+        this.p1moveID = -2;
         this.p2moveID = p2moveID;
         this.roundResult = roundResult;
         this.shouldContinue = false;
@@ -26,6 +28,7 @@ public class StatusDTO {
         this.counters = counters;
         this.statusCode = statusCode;
         this.availableMoves = availableMoves;
+        this.p1moveID = -1;
         this.p2moveID = -1;
         this.roundResult = null;
         this.shouldContinue = true;
@@ -35,10 +38,21 @@ public class StatusDTO {
         this.counters = counters;
         this.statusCode = statusCode;
         this.availableMoves = availableMoves;
+        this.p1moveID = -2;
         this.p2moveID = p2moveID;
         this.roundResult = roundResult;
         this.shouldContinue = shouldContinue;
-    }    
+    }
+    
+    public StatusDTO(int[] counters, int statusCode, ArrayList<Integer> availableMoves, int p1moveID, int p2moveID, String roundResult, boolean shouldContinue) {
+        this.counters = counters;
+        this.statusCode = statusCode;
+        this.availableMoves = availableMoves;
+        this.p1moveID = p1moveID;
+        this.p2moveID = p2moveID;
+        this.roundResult = roundResult;
+        this.shouldContinue = shouldContinue;
+    }
 
 
     public int[] getCounters() {
@@ -63,6 +77,14 @@ public class StatusDTO {
 
     public void setAvailableMoves(ArrayList<Integer> availableMoves) {
         this.availableMoves = availableMoves;
+    }
+
+    public int getP1moveID() {
+        return this.p1moveID;
+    }
+
+    public void setP1moveID(int p1moveID) {
+        this.p1moveID = p1moveID;
     }
 
     public int getP2moveID() {
