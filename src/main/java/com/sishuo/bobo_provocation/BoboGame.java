@@ -3,11 +3,13 @@ package com.sishuo.bobo_provocation;
 public class BoboGame {
     public Player p1;
     public Player p2;
+    public ComputerMove cm;
     int moveCount;
 
     public BoboGame() {
         this.p1 = new Player();
         this.p2 = new Player();
+        this.cm = new ComputerMove();
         this.moveCount = 0;
     }
 
@@ -18,6 +20,7 @@ public class BoboGame {
         p1.reset();
         p2.reset();
         StatusDTO status = p1.showStatus(); // 初始化status
+        cm.updateP1(-2, null);
         System.out.print("\n等待Player1（前端）选择招式...");
         return status;
     }
@@ -42,7 +45,7 @@ public class BoboGame {
 
         System.out.println();
         System.out.println("Player2（电脑）目前状态：");
-        int p2move = p2.makeWeightedMove();
+        int p2move = p2.makeAdjustedWeightedMove(this.cm);
         // int p2move = p2.makeMove(); for testing (manual input)
         if (p2move != -1) {
             System.out.println("Player2（电脑）出招：" + p2move + ":" + Player.moves[p2move]);
@@ -79,6 +82,8 @@ public class BoboGame {
         newStatus.setP2moveID(p2move);
         newStatus.setRoundResult(sb.toString());
         newStatus.setShouldContinue(shouldContinue);
+
+        cm.updateP1(p1move, newStatus);
 
         if (p1.getState() == 3) {
             // 减少解雇状态一回合

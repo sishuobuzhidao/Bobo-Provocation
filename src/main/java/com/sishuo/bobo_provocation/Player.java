@@ -608,6 +608,33 @@ public class Player {
         }
     }
 
+    public int makeAdjustedWeightedMove(ComputerMove cm) {
+        int moving = this.showAvailableMoves();
+        // moving == 2 被冰冻； moving == 3 被解雇
+        if (moving == 2) {
+            return -1;
+        } else if (moving == 3) {
+            minusOneLayoff();
+            return 1;
+        } else {
+            cm.updateWeights(this.available); // 在cm内更新权重
+            ArrayList<Integer> cumulatedAvailableMoveWeights = new ArrayList<>();
+            int weight = cm.generateCumulativeList(this.available, cumulatedAvailableMoveWeights);
+
+            System.out.println("Player2权重表:" + cumulatedAvailableMoveWeights.toString());
+            Random r = new Random();
+            int randInt = r.nextInt(1, weight + 1);
+
+            int index = Collections.binarySearch(cumulatedAvailableMoveWeights, randInt);
+            if (index < 0) {
+                // index = - insertionPoint - 1
+                index = (index + 1) * -1;
+            }
+
+            return available.get(index);
+        }
+    }
+
     public static String getRandomMessage(int type) {
         Random r = new Random();
         int index = r.nextInt(4);
