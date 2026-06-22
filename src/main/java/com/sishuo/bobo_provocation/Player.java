@@ -179,6 +179,11 @@ public class Player {
         String result;
         if (p1.getState() == 2) {
             res =  results[0][secondPlayer];
+            if (secondPlayer == 14 && firstPlayer != 14) {
+                p1.setLayoff();
+            } else if (firstPlayer == 14 && secondPlayer != 14) {
+                p2.setLayoff();
+            }
             p1.setState(res[0]);
             p2.setState(res[1]);
             result = "Player1本回合被冰冻，无法出招\n";
