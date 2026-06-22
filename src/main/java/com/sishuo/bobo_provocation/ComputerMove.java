@@ -82,7 +82,7 @@ public class ComputerMove {
         }
         if (p2AvailableMoves.contains(12)) {
             if (counters[0] <= 6 && counters[2] <= 2) {
-                adjust(11, 100000);
+                adjust(12, 100000);
             }
         }
 
