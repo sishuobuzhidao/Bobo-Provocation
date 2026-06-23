@@ -28,6 +28,10 @@ function toggleAIDifficulty() {
 
 // 开始游戏
 function startGame() {
+    document.getElementById("start").disabled = true;
+    document.getElementById("mode-toggle").disabled = true;
+    document.getElementById("ai-difficulty-toggle").disabled = true;
+
     fetch('http://localhost:8080/api/startGame', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -42,9 +46,6 @@ function startGame() {
             document.getElementById("battle-log-text").innerText = isUltraHardModeOn ? "请选择你第一回合的招式。如果招式非法，后台会随机从可选招式中选择一个！" : "请选择你第一回合的招式。";
             document.getElementById("p1-action-billboard").innerText = "等候选择...";
             document.getElementById("p2-action-billboard").innerText = "等候出招...";
-            document.getElementById("start").disabled = true;
-            document.getElementById("mode-toggle").disabled = true;
-            document.getElementById("ai-difficulty-toggle").disabled = true;
             isGameStarted = true;
             
             document.getElementById("p1-status").innerText = "对局中";
@@ -60,6 +61,9 @@ function startGame() {
     })
     .catch(err => {
         document.getElementById("battle-log-text").innerText = "无法连接到后端，请确保 Spring Boot 已启动。";
+        document.getElementById("start").disabled = false;
+        document.getElementById("mode-toggle").disabled = false;
+        document.getElementById("ai-difficulty-toggle").disabled = false;
     });
 }
 
