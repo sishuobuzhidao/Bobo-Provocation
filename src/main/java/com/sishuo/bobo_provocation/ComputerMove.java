@@ -9,7 +9,7 @@ public class ComputerMove {
     private StatusDTO p1LastRoundStatus;
 
     // private static final int[] MOVEWEIGHTS_OLD = {10, 9, 4, 4, 5, 1, 1, 12, 10, 25, 20, 50, 100, 200, 1000};
-    private static int[] moveWeights = {40, 10, 3, 3, 4, 1, 1, 15, 10, 100, 5, 200, 500, 100000, 1000000};
+    private static int[] moveWeights = {35, 10, 3, 3, 4, 1, 1, 15, 10, 100, 5, 200, 500, 100000, 1000000};
     private int[] tempWeights;
 
     public ComputerMove() {
@@ -37,7 +37,7 @@ public class ComputerMove {
     public void updateWeights(ArrayList<Integer> p2AvailableMoves) {
         if (p1LastRoundStatus == null) {
             // game just started -> No statusDTO
-            adjust(0, 100);
+            adjust(0, 1000);
             // 挑衅权重增加
             return;
         }
@@ -57,14 +57,14 @@ public class ComputerMove {
 
         if (p1StatusCode == 2) {
             // p1被冰冻
-            adjust(0, 50);
-            adjust(7, 60);
-            adjust(9, 60);
+            adjust(0, 1000);
+            adjust(7, 1000000);
+            adjust(9, 1000000);
             return;
         } else if (p1StatusCode == 3) {
             // p1被解雇
-            adjust(4, 100000);
-            adjust(0, 50);
+            adjust(4, 1000000);
+            adjust(0, 1000);
             return;
         }
 
@@ -85,12 +85,26 @@ public class ComputerMove {
                 adjust(12, 100000);
             }
         }
+        if (!p2AvailableMoves.contains(7) && !p2AvailableMoves.contains(11) && !p2AvailableMoves.contains(12)) {
+            // 自己不能出直拳（且不能使用冰冻/大猩猩，更高的暂时不管），减少勾拳，尽量出挑衅
+            adjust(4, -5);
+            adjust(5, -5);
+            adjust(6, -5);
+            adjust(0, 5);
+        }
 
         if (counters[1] == 0) {
-            // 对面空手，安全出挑衅
+            // 对面空手，安全出挑衅，不出防御/左右避
             adjust(0, 100);
+            adjust(7, 10);
+            adjust(1, -8);
+            adjust(2, -5);
+            adjust(3, -5);
         } else if (counters[1] >= 1 && counters[1] < 3) {
-            adjust(1, 4);
+            adjust(1, 15);
+            adjust(2, 1);
+            adjust(3, 1);
+            adjust(7, 5);
             adjust(8, 10);
         } else if (counters[1] >= 3) {
             adjust(0, -30);
@@ -100,7 +114,9 @@ public class ComputerMove {
         }
 
         if (counters[2] == 0) {
-            adjust(4, 5);
+            // 对面没有防御：打直拳或者上勾拳
+            adjust(4, 10);
+            adjust(7, 25);
         }
         if (counters[2] == 1) {
             adjust(7, -3);
@@ -114,8 +130,11 @@ public class ComputerMove {
 
         switch (this.p1LastRoundMove) {
             case 0: 
-                adjust(4, 10);
+                adjust(0, -5);
+                adjust(1, 5);
+                adjust(4, 5);
                 adjust(7, 10);
+                adjust(8, 10);
                 break;
             case 1:
                 adjust(4, 5);

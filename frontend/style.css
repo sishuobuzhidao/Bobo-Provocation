@@ -36,14 +36,14 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1); 
     letter-spacing: 6px;       /* 竖排汉字的精髓间距 */
     writing-mode: vertical-rl;
-    margin-bottom: 37px;
+    margin-bottom: 10px;
     font-size: 110px;
     transform: rotate(-10deg);
 }
 
 .subtitle { 
     margin-top: 0;
-    margin-bottom: 20px;       /* 顺滑推开底下的开始游戏按钮 */
+    margin-bottom: 14px;       /* 顺滑推开底下的开始游戏按钮 */
     font-style: italic; 
     color: #4a3728; 
     font-size: 17px;
@@ -54,6 +54,13 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
+}
+
+.toggle-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
 }
 
 #start {
@@ -81,7 +88,7 @@ body {
     box-shadow: 0 2px 4px #31180c66;
 }
 
-#mode-toggle {
+.toggle-button {
     width: 70px;
     height: 70px;
     background-color: #4a3728;
@@ -95,7 +102,8 @@ body {
     transition: all 0.2s;
     align-self: center;
 }
-#mode-toggle:hover {
+
+.toggle-button:hover {
     background-color: #3a2a1a;
     transform: scale(1.05);
 }

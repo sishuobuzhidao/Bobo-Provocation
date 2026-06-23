@@ -46,23 +46,26 @@ public class BoboController {
     }
 
     @PostMapping("/startGame")
-    public StatusDTO startGame(@RequestBody Map<String, String> requestBody) {
+    public StatusDTO startGame(@RequestBody Map<String, Object> requestBody) {
         System.out.println();
         
         // 获取前端传来的数据
-        String message = requestBody.get("startGame");
+        String message = requestBody.get("startGame").toString();
+        Integer aiDifficulty = Integer.parseInt(requestBody.get("aiDifficulty").toString());
 
         if (message.equals("normal")) {
-            System.out.println("\n前端发起新一局普通模式游戏\n");
+            System.out.println("\n前端发起新一局普通模式游戏");
+            System.out.println("游戏难度代码：" + aiDifficulty + "\n");
             System.out.println("----------------------------------------");
             System.out.println("Player1（前端）目前状态：");
-            StatusDTO status = this.game.runNewGame(false);
+            StatusDTO status = this.game.runNewGame(false, aiDifficulty);
             return status;
         } else if (message.equals("ultra")) {
-            System.out.println("\n前端发起新一局困难模式游戏\n");
+            System.out.println("\n前端发起新一局困难模式游戏");
+            System.out.println("游戏难度代码：" + aiDifficulty + "\n");
             System.out.println("----------------------------------------");
             System.out.println("Player1（前端）目前状态：");
-            StatusDTO status = this.game.runNewGame(true);
+            StatusDTO status = this.game.runNewGame(true, aiDifficulty);
             return status;
         } else {
             return null;

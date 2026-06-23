@@ -4,25 +4,40 @@ public class BoboGame {
     public Player p1;
     public Player p2;
     public ComputerMove cm;
-    int moveCount;
+    public int aiDifficulty;
+    public int moveCount;
 
     public BoboGame() {
         this.p1 = new Player();
         this.p2 = new Player();
         this.cm = new ComputerMove();
+        this.aiDifficulty = -1;
         this.moveCount = 0;
     }
 
-    public StatusDTO runNewGame(boolean isUltraHardModeOn) {
+    public StatusDTO runNewGame(boolean isUltraHardModeOn, int aiDifficulty) {
         // 这里p1是玩家，p2是随机出招的电脑
         // String movesAndIndices = "0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 | 8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
         this.moveCount = 0;
+        this.aiDifficulty = aiDifficulty;
         p1.reset();
         p2.reset();
         StatusDTO status = p1.showStatus(); // 初始化status
         cm.updateP1(-2, null);
         System.out.print("\n等待Player1（前端）选择招式...");
         return status;
+    }
+
+    public int makeP2Move() {
+        if (this.aiDifficulty == 0) {
+            return p2.makeRandomMove(true);
+        } else if (this.aiDifficulty == 1) {
+            return p2.makeWeightedMove();
+        } else if (this.aiDifficulty == 2) {
+            return p2.makeAdjustedWeightedMove(this.cm);
+        } else {
+            return p2.makeMove(); // Should not happen
+        }
     }
 
     public StatusDTO startOneNewRound(int p1move, boolean isUltraHardModeOn) {
@@ -45,8 +60,7 @@ public class BoboGame {
 
         System.out.println();
         System.out.println("Player2（电脑）目前状态：");
-        int p2move = p2.makeAdjustedWeightedMove(this.cm);
-        // int p2move = p2.makeMove(); for testing (manual input)
+        int p2move = makeP2Move();
         if (p2move != -1) {
             System.out.println("Player2（电脑）出招：" + p2move + ":" + Player.moves[p2move]);
         } else {
