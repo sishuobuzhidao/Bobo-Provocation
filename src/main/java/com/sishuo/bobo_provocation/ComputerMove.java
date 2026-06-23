@@ -130,8 +130,8 @@ public class ComputerMove {
 
         switch (this.p1LastRoundMove) {
             case 0: 
-                adjust(0, -5);
-                adjust(1, 5);
+                adjust(0, -10);
+                adjust(1, 10);
                 adjust(4, 5);
                 adjust(7, 10);
                 adjust(8, 10);
