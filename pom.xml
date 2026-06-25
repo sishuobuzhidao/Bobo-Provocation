@@ -11,21 +11,10 @@
 	<groupId>com.sishuo</groupId>
 	<artifactId>bobo_provocation</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
+	<name>Bobo Provocation</name>
+	<description>A two-player turn-based combat game with resource management and predictive AI</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<maven.compiler.source>17</maven.compiler.source>
