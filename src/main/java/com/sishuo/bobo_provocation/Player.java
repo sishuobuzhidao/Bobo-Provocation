@@ -9,16 +9,16 @@ import java.util.Scanner;
 public class Player {
     public static Scanner sc;
 
-    private int provocations_accu;
-    private int provocations_unused;
+    private int provocationsAccu;
+    private int provocationsUnused;
     private int defenses;
 
-    private int freeze_counter;
-    private int lgorilla_counter;
-    private int critical_counter;
-    private int layoff_counter;
+    private int freezeCounter;
+    private int largeGorillaCounter;
+    private int criticalCounter;
+    private int layoffCounter;
 
-    private int layoff_remaining_moves;
+    private int layoffRemainingMoves;
 
     private int state;
     public static final int LOST = -1;
@@ -107,16 +107,16 @@ public class Player {
     }
 
     public Player() {
-        provocations_accu = 0;
-        provocations_unused = 0;
+        provocationsAccu = 0;
+        provocationsUnused = 0;
         defenses = 0;
 
-        freeze_counter = 0;
-        lgorilla_counter = 0;
-        critical_counter = 0;
-        layoff_counter = 0;
+        freezeCounter = 0;
+        largeGorillaCounter = 0;
+        criticalCounter = 0;
+        layoffCounter = 0;
 
-        layoff_remaining_moves = 0;
+        layoffRemainingMoves = 0;
 
         state = Player.NORMAL;
         available = new ArrayList<>();
@@ -127,7 +127,7 @@ public class Player {
     }
 
     public void setState(int state) {
-        if (state < Player.LOST && state > Player.LAYOFFED) {
+        if (state < Player.LOST || state > Player.LAYOFFED) {
             throw new RuntimeException("Invalid state number!");
             // return;
         }
@@ -140,14 +140,14 @@ public class Player {
 
     public void setLayoff() {
         this.state = Player.LAYOFFED;
-        this.layoff_remaining_moves = 5;
+        this.layoffRemainingMoves = 5;
     }
 
     public boolean minusOneLayoff() {
         // Returns true if the layoff status ends
-        this.layoff_remaining_moves--;
+        this.layoffRemainingMoves--;
         this.state = Player.LAYOFFED;
-        if (this.layoff_remaining_moves == 0) {
+        if (this.layoffRemainingMoves == 0) {
             this.state = Player.NORMAL;
             return true;
         }
@@ -155,23 +155,23 @@ public class Player {
     }
 
     public int getLayoffRemaining() {
-        return this.layoff_remaining_moves;
+        return this.layoffRemainingMoves;
     }
 
     public void reset() {
-        provocations_accu = 0;
-        provocations_unused = 0;
+        provocationsAccu = 0;
+        provocationsUnused = 0;
         defenses = 0;
 
-        freeze_counter = 0;
-        lgorilla_counter = 0;
-        critical_counter = 0;
-        layoff_counter = 0;
+        freezeCounter = 0;
+        largeGorillaCounter = 0;
+        criticalCounter = 0;
+        layoffCounter = 0;
 
         state = Player.NORMAL;
         available.clear();
 
-        this.layoff_remaining_moves = 0;
+        this.layoffRemainingMoves = 0;
     }
 
     public static int[] calculateState(int firstPlayer, int secondPlayer) {
@@ -319,13 +319,13 @@ public class Player {
 
     public int showAvailableMoves(){
         available.clear();
-        System.out.println("现在状态：累计挑衅: " + provocations_accu);
-        System.out.println("现在状态：未兑换挑衅: " + provocations_unused);
+        System.out.println("现在状态：累计挑衅: " + provocationsAccu);
+        System.out.println("现在状态：未兑换挑衅: " + provocationsUnused);
         System.out.println("现在状态：未兑换防御: " + defenses);
-        System.out.print("冰冻计数器：" + freeze_counter);
-        System.out.print("; 大猩猩计数器：" + lgorilla_counter);
-        System.out.print("; 致命一击计数器：" + critical_counter);
-        System.out.println("; 解雇计数器：" + layoff_counter);
+        System.out.print("冰冻计数器：" + freezeCounter);
+        System.out.print("; 大猩猩计数器：" + largeGorillaCounter);
+        System.out.print("; 致命一击计数器：" + criticalCounter);
+        System.out.println("; 解雇计数器：" + layoffCounter);
 
         System.out.println("当前玩家状态码：" + state);
 
@@ -357,26 +357,26 @@ public class Player {
             available.add(8);
         }
 
-        if (provocations_unused >= 3) {
+        if (provocationsUnused >= 3) {
             available.add(9);
         } 
-        if (provocations_unused >= 1) {
+        if (provocationsUnused >= 1) {
             available.add(7);
         }
 
-        if (freeze_counter >= 5) {
+        if (freezeCounter >= 5) {
             available.add(11);
         }
 
-        if (lgorilla_counter >= 6) {
+        if (largeGorillaCounter >= 6) {
             available.add(12);
         }
 
-        if (critical_counter >= 7) {
+        if (criticalCounter >= 7) {
             available.add(13);
         }
 
-        if (layoff_counter >= 10) {
+        if (layoffCounter >= 10) {
             available.add(14);
         }
         
@@ -402,14 +402,14 @@ public class Player {
     public StatusDTO showStatus(){
         available.clear();
 
-        int[] counters = {provocations_accu, provocations_unused, defenses, freeze_counter, lgorilla_counter, critical_counter, layoff_counter};
-        System.out.println("现在状态：累计挑衅: " + provocations_accu);
-        System.out.println("现在状态：未兑换挑衅: " + provocations_unused);
+        int[] counters = {provocationsAccu, provocationsUnused, defenses, freezeCounter, largeGorillaCounter, criticalCounter, layoffCounter};
+        System.out.println("现在状态：累计挑衅: " + provocationsAccu);
+        System.out.println("现在状态：未兑换挑衅: " + provocationsUnused);
         System.out.println("现在状态：未兑换防御: " + defenses);
-        System.out.print("冰冻计数器：" + freeze_counter);
-        System.out.print("; 大猩猩计数器：" + lgorilla_counter);
-        System.out.print("; 致命一击计数器：" + critical_counter);
-        System.out.println("; 解雇计数器：" + layoff_counter);
+        System.out.print("冰冻计数器：" + freezeCounter);
+        System.out.print("; 大猩猩计数器：" + largeGorillaCounter);
+        System.out.print("; 致命一击计数器：" + criticalCounter);
+        System.out.println("; 解雇计数器：" + layoffCounter);
 
         System.out.println("当前玩家状态码：" + state);
 
@@ -444,26 +444,26 @@ public class Player {
             available.add(8);
         }
 
-        if (provocations_unused >= 3) {
+        if (provocationsUnused >= 3) {
             available.add(9);
         } 
-        if (provocations_unused >= 1) {
+        if (provocationsUnused >= 1) {
             available.add(7);
         }
 
-        if (freeze_counter >= 5) {
+        if (freezeCounter >= 5) {
             available.add(11);
         }
 
-        if (lgorilla_counter >= 6) {
+        if (largeGorillaCounter >= 6) {
             available.add(12);
         }
 
-        if (critical_counter >= 7) {
+        if (criticalCounter >= 7) {
             available.add(13);
         }
 
-        if (layoff_counter >= 10) {
+        if (layoffCounter >= 10) {
             available.add(14);
         }
         
@@ -486,11 +486,11 @@ public class Player {
 
     public void updateProvocationUnused(int cost) {
         // 优先扣除已兑换的挑衅数量，再扣除未兑换的挑衅数量
-        if (cost <= provocations_accu - provocations_unused) {
+        if (cost <= provocationsAccu - provocationsUnused) {
             // 总共的已兑换挑衅数量大于等于总花费
             return;
         } else {
-            this.provocations_unused -= cost - (this.provocations_accu - this.provocations_unused);
+            this.provocationsUnused -= cost - (this.provocationsAccu - this.provocationsUnused);
         }
     }
 
@@ -500,49 +500,49 @@ public class Player {
         */
         switch (move) {
             case 0: //挑衅
-                provocations_accu++;
-                provocations_unused++;
-                freeze_counter++;
-                lgorilla_counter++;
-                critical_counter++;
-                layoff_counter++;
+                provocationsAccu++;
+                provocationsUnused++;
+                freezeCounter++;
+                largeGorillaCounter++;
+                criticalCounter++;
+                layoffCounter++;
                 break;
             case 1: //防御
                 defenses++;
                 break;
             case 7: //直拳
-                provocations_unused--;
+                provocationsUnused--;
                 break;
             case 8: //反弹
                 defenses--;
                 break;
             case 9: //小猩猩
-                provocations_unused -= 3;
+                provocationsUnused -= 3;
                 break;
             case 10: //双层防御
                 defenses -= 2;
                 break;
             case 11: //冰冻
                 updateProvocationUnused(5);
-                freeze_counter = 0;
+                freezeCounter = 0;
                 break;
             case 12: //大猩猩
                 updateProvocationUnused(6);
-                freeze_counter = 0;
-                lgorilla_counter = 0;
+                freezeCounter = 0;
+                largeGorillaCounter = 0;
                 break;
             case 13: //致命一击
                 updateProvocationUnused(7);
-                freeze_counter = 0;
-                lgorilla_counter = 0;
-                critical_counter = 0;
+                freezeCounter = 0;
+                largeGorillaCounter = 0;
+                criticalCounter = 0;
                 break;
             case 14: //解雇
                 updateProvocationUnused(10);
-                freeze_counter = 0;
-                lgorilla_counter = 0;
-                critical_counter = 0;
-                layoff_counter = 0;
+                freezeCounter = 0;
+                largeGorillaCounter = 0;
+                criticalCounter = 0;
+                layoffCounter = 0;
                 break;
             // default:
             //     break;
