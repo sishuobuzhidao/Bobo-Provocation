@@ -3,6 +3,8 @@ package com.sishuo.bobo_provocation;
 import java.util.ArrayList;
 
 // Class for a JSON package for the status of a Player before making their move
+// only includes relevant constructors, getters and setters
+
 public class StatusDTO {
     
     private int[] counters;

@@ -6,11 +6,14 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // 🌟 跨域金牌：允许前端网页无阻碍地连上来
+@CrossOrigin(origins = "*")
 public class BoboController {
 
     public BoboGame game = new BoboGame();
 
+    // handleMove(requestBody) accepts a POST json package from frontend
+    // called during a game, returns a StatusDTO calculated by BoboGame.java
+    // if not called during a game (for testing), returns a randInt(0, 15) in a StatusDTO and returns
     @PostMapping("/analyzeMove")
     public StatusDTO handleMove(@RequestBody Map<String, Object> requestBody) {
 
@@ -45,6 +48,9 @@ public class BoboController {
         
     }
 
+    // startGame(requestBody) accepts a POST json package from frontend
+    // called to start a game, includes the difficulty of the AI and the mode of the game (normal/ultra)
+    // returns a StatusDTO to frontend
     @PostMapping("/startGame")
     public StatusDTO startGame(@RequestBody Map<String, Object> requestBody) {
         System.out.println();

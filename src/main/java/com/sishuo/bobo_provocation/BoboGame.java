@@ -1,11 +1,18 @@
 package com.sishuo.bobo_provocation;
 
+// This class describes a running BoboGame
+// contains two Player p1 and p2, and a ComputerMove cm
+
 public class BoboGame {
-    public Player p1;
-    public Player p2;
+    public Player p1; // p1 is always the frontend user
+    public Player p2; // p2 is always the backend computer
     public ComputerMove cm;
     public int aiDifficulty;
     public int moveCount;
+
+    public static final int EASY_DIFFICULTY = 0;
+    public static final int NORMAL_DIFFICULTY = 1;
+    public static final int HARD_DIFFICULTY = 2;
 
     public BoboGame() {
         this.p1 = new Player();
@@ -15,6 +22,8 @@ public class BoboGame {
         this.moveCount = 0;
     }
 
+    // runNewGame(isUltraHardModeOn, aiDifficulty) runs a new requested Bobo Provocation game
+    // updates this.isUltraHardModeOn and this.aiDifficulty
     public StatusDTO runNewGame(boolean isUltraHardModeOn, int aiDifficulty) {
         // 这里p1是玩家，p2是随机出招的电脑
         // String movesAndIndices = "0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 | 8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
@@ -28,18 +37,23 @@ public class BoboGame {
         return status;
     }
 
+    // makeP2Move() returns a moveID depending on aiDifficulty
     public int makeP2Move() {
-        if (this.aiDifficulty == 0) {
+        if (this.aiDifficulty == BoboGame.EASY_DIFFICULTY) {
             return p2.makeRandomMove(true);
-        } else if (this.aiDifficulty == 1) {
+        } else if (this.aiDifficulty == BoboGame.NORMAL_DIFFICULTY) {
             return p2.makeWeightedMove();
-        } else if (this.aiDifficulty == 2) {
+        } else if (this.aiDifficulty == BoboGame.HARD_DIFFICULTY) {
             return p2.makeAdjustedWeightedMove(this.cm);
         } else {
             return p2.makeMove(); // Should not happen
         }
     }
 
+    // startOneNewRound(p1move, isUltraHardModeOn) first prints the frontend user's choice to console
+    // then make the computer's move and calculates the round result
+    // finally, prints the current information of the frontend user after this round
+    // and returns to frontend a StatusDTO object
     public StatusDTO startOneNewRound(int p1move, boolean isUltraHardModeOn) {
         System.out.println();
         this.moveCount++;

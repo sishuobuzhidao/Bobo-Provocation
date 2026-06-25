@@ -6,6 +6,9 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.Scanner;
 
+// This class describes a Player playing Bobo Provocation
+// contains the state and counters of the Player during a game
+
 public class Player {
     public static Scanner sc;
 
@@ -126,6 +129,7 @@ public class Player {
         return this.state;
     }
 
+    // setState() sets a Player's state (state should be in -1, 0, 1, 2, 3)
     public void setState(int state) {
         if (state < Player.LOST || state > Player.LAYOFFED) {
             throw new RuntimeException("Invalid state number!");
@@ -134,17 +138,21 @@ public class Player {
         this.state = state;
     }
 
+    // getAvailableMovesArray() returns this.available
     public ArrayList<Integer> getAvailableMovesArray() {
         return this.available;
     }
 
+    // setLayoff() Force the Player to have 5 rounds of only defenses
     public void setLayoff() {
         this.state = Player.LAYOFFED;
         this.layoffRemainingMoves = 5;
     }
 
+    // minusOneLayoff() removes one round of LAYOFF state. 
+    // If the LAYOFF state hits zero, the state is changed
+    // back to NORMAL and returns true
     public boolean minusOneLayoff() {
-        // Returns true if the layoff status ends
         this.layoffRemainingMoves--;
         this.state = Player.LAYOFFED;
         if (this.layoffRemainingMoves == 0) {
@@ -154,10 +162,13 @@ public class Player {
         return false;
     }
 
+    // getLayoffRemaining() returns this.layoffRemainingMoves
     public int getLayoffRemaining() {
         return this.layoffRemainingMoves;
     }
 
+    // reset() is called when a new game starts
+    // the method resets/initializes the player's counters and state
     public void reset() {
         provocationsAccu = 0;
         provocationsUnused = 0;
@@ -174,11 +185,16 @@ public class Player {
         this.layoffRemainingMoves = 0;
     }
 
+    // calculateState(firstPlayer, secondPlayer)
+    // Reads Player.results and returns an int[2] representing the state of players after the round
+    // firstPlayer and secondPlayer are ints representing the moveID of Player1 and Player2, respectively
     public static int[] calculateState(int firstPlayer, int secondPlayer) {
-        // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
-        return results[firstPlayer][secondPlayer];
+        return Player.results[firstPlayer][secondPlayer];
     }
 
+    // updateState(p1, p2, firstPlayer, secondPlayer)
+    // reads Player.results for the states of Players; updates p1.state and p2.state
+    // returns a String describing the round result
     public static String updateState(Player p1, Player p2, int firstPlayer, int secondPlayer) {
         System.out.println();
         int[] res = null;
@@ -235,6 +251,8 @@ public class Player {
         return result;
     }
 
+    // analyzeState(states) accepts a int[2], which has the state ID for the two players
+    // returns a String that describes the round result
     public static String analyzeState(int[] states) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
         String result;
@@ -257,6 +275,8 @@ public class Player {
         return result;
     }
 
+    // analyzeState(p1, p2) inputs two Players whose states have been updated and analyzes the states
+    // returns true if the game should continue, returns false otherwise
     public static boolean analyzeState(Player p1, Player p2) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
         if (p1.getState() == Player.LOST || p2.getState() == Player.WON) {
@@ -283,6 +303,9 @@ public class Player {
         }
     }
 
+    // analyzeState(p1, p2, sb) inputs two Players whose states have been updated and analyzes the states
+    // the method also inputs a StringBuilder sb, where the String message describing the round result is updated
+    // returns true if the game should continue, returns false otherwise
     public static boolean analyzeState(Player p1, Player p2, StringBuilder sb) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
         if (p1.getState() == Player.LOST || p2.getState() == Player.WON) {
@@ -316,9 +339,59 @@ public class Player {
         }
     }
 
+    // updateAvailableMovesArray() updates this.available and sorts the ArrayList (ascending)
+    // does not print anything to console and does not check this.state (assumes state is NORMAL)
+    public void updateAvailableMovesArray() {
+        this.available.clear();
+        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
+             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
+        */
+        this.available.add(0);
+        this.available.add(1);
+        this.available.add(2);
+        this.available.add(3);
+        this.available.add(4);
+        this.available.add(5);
+        this.available.add(6);
+        
+        if (defenses >= 2) {
+            this.available.add(10);
+        }
+        if (defenses >= 1) {
+            this.available.add(8);
+        }
+        if (provocationsUnused >= 3) {
+            this.available.add(9);
+        } 
+        if (provocationsUnused >= 1) {
+            this.available.add(7);
+        }
+        if (freezeCounter >= 5) {
+            this.available.add(11);
+        }
+        if (largeGorillaCounter >= 6) {
+            this.available.add(12);
+        }
+        if (criticalCounter >= 7) {
+            this.available.add(13);
+        }
+        if (layoffCounter >= 10) {
+            this.available.add(14);
+        }
+        
+        this.available.sort(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1 - o2;
+            }    
+        });
+    }
 
-    public int showAvailableMoves(){
-        available.clear();
+
+    // showAvailableMoves() updates this.available by calling updateAvailableMovesArray() 
+    // prints the counters and all available moves to console
+    public int showAvailableMoves() {
+        this.available.clear();
         System.out.println("现在状态：累计挑衅: " + provocationsAccu);
         System.out.println("现在状态：未兑换挑衅: " + provocationsUnused);
         System.out.println("现在状态：未兑换防御: " + defenses);
@@ -337,68 +410,18 @@ public class Player {
             return Player.LAYOFFED;
         }
 
-        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
-             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
-        */
-
-        // ArrayList<Integer> available = new ArrayList<>();
-        available.add(0);
-        available.add(1);
-        available.add(2);
-        available.add(3);
-        available.add(4);
-        available.add(5);
-        available.add(6);
-        
-        if (defenses >= 2) {
-            available.add(10);
-        }
-        if (defenses >= 1) {
-            available.add(8);
-        }
-
-        if (provocationsUnused >= 3) {
-            available.add(9);
-        } 
-        if (provocationsUnused >= 1) {
-            available.add(7);
-        }
-
-        if (freezeCounter >= 5) {
-            available.add(11);
-        }
-
-        if (largeGorillaCounter >= 6) {
-            available.add(12);
-        }
-
-        if (criticalCounter >= 7) {
-            available.add(13);
-        }
-
-        if (layoffCounter >= 10) {
-            available.add(14);
-        }
-        
-        available.sort(new Comparator<Integer>() {
-
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o1 - o2;
-            }
-            
-        });
-
+        updateAvailableMovesArray();
         System.out.println("本回合可使用的招法：");
         for (int i : available) {
             System.out.print(i + ":" + moves[i] + "; ");
         }
         System.out.println();
-
-        return 0;
+        return Player.NORMAL;
     }
 
-    // The returning Object[] has one 7-sized array in index 0, one int in index 1 and one ArrayList<Integer> in index 2
+    // showStatus() returns a StatusDTO object containing information (counters, states) about the Player
+    // updates this.available by calling updateAvailableMovesArray()
+    // prints relevant information to console
     public StatusDTO showStatus(){
         available.clear();
 
@@ -424,57 +447,7 @@ public class Player {
             return new StatusDTO(counters, state, available);
         }
 
-        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
-             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
-        */
-
-        // ArrayList<Integer> available = new ArrayList<>();
-        available.add(0);
-        available.add(1);
-        available.add(2);
-        available.add(3);
-        available.add(4);
-        available.add(5);
-        available.add(6);
-        
-        if (defenses >= 2) {
-            available.add(10);
-        }
-        if (defenses >= 1) {
-            available.add(8);
-        }
-
-        if (provocationsUnused >= 3) {
-            available.add(9);
-        } 
-        if (provocationsUnused >= 1) {
-            available.add(7);
-        }
-
-        if (freezeCounter >= 5) {
-            available.add(11);
-        }
-
-        if (largeGorillaCounter >= 6) {
-            available.add(12);
-        }
-
-        if (criticalCounter >= 7) {
-            available.add(13);
-        }
-
-        if (layoffCounter >= 10) {
-            available.add(14);
-        }
-        
-        available.sort(new Comparator<Integer>() {
-
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o1 - o2;
-            }
-            
-        });
+        updateAvailableMovesArray();
 
         System.out.println("本回合可使用的招法：");
         for (int i : available) {
@@ -484,6 +457,8 @@ public class Player {
         return new StatusDTO(counters, 1, available);
     }
 
+    // updateProvocationUnused(cost) updates this.provocationUnused
+    // called when freeze/large gorilla/critical/layoff is used by a player
     public void updateProvocationUnused(int cost) {
         // 优先扣除已兑换的挑衅数量，再扣除未兑换的挑衅数量
         if (cost <= provocationsAccu - provocationsUnused) {
@@ -494,6 +469,7 @@ public class Player {
         }
     }
 
+    // analyzeMove(move) inputs a moveID (0 <= move <= 14) and updates the Player's counters
     public void analyzeMove(int move) {
         /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
              8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
@@ -549,6 +525,8 @@ public class Player {
         }
     }
     
+    // makeMove() allows a Player to make a move by typing in a moveID (0 <= moveID <= 14) to System.in
+    // returns the number inputed
     public int makeMove() {
         if (Player.sc == null) {
             Player.sc = new Scanner(System.in);
@@ -577,10 +555,12 @@ public class Player {
         }
     }
 
+    // makeRandomMove(show) returns a random moveID in this.available
+    // each moveID is equally likely to be returned
+    // If needs updating this.available and printing the Player's information to console, 
+    // call makeRandomMove(true)
     public int makeRandomMove(boolean show) {
         if (show) {
-            // If show == true, then the status has not been printed to backend
-            // If show == false, this.state & this.available are updated, no need to update again
             this.showAvailableMoves();
         }
         // state == 2 被冰冻； state == 3 被解雇        
@@ -595,6 +575,8 @@ public class Player {
         }
     }
 
+    // makeWeightedMove() returns a moveID in available
+    // the probability of an ID chosen depends on the weight in Player.moveWeights
     public int makeWeightedMove() {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
@@ -625,6 +607,9 @@ public class Player {
         }
     }
 
+    // makeAdjustedWeightedMove(cm) returns a moveID in available
+    // the probability of a moveID chosen is altered in cm.updatedWeights(), which is related to
+    // the previous move, state, and counters of the frontend user
     public int makeAdjustedWeightedMove(ComputerMove cm) {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
@@ -652,6 +637,9 @@ public class Player {
         }
     }
 
+    // getRandomMessage(int type) returns a random message String 
+    // stored in Player.failMessages, Player.normalMessages and Player.winMessages
+    // type can only be -1, 0, 1 for correct usage
     public static String getRandomMessage(int type) {
         Random r = new Random();
         int index = r.nextInt(4);
