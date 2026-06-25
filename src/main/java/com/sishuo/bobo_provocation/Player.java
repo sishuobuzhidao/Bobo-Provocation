@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Player {
-    public static Scanner sc = new Scanner(System.in);
+    public static Scanner sc;
 
     private int provocations_accu;
     private int provocations_unused;
@@ -21,6 +21,12 @@ public class Player {
     private int layoff_remaining_moves;
 
     private int state;
+    public static final int LOST = -1;
+    public static final int NORMAL = 0;
+    public static final int WON = 1;
+    public static final int FROZEN = 2;
+    public static final int LAYOFFED = 3;
+
     private ArrayList<Integer> available;
 
     private static int[][][] results;
@@ -112,7 +118,7 @@ public class Player {
 
         layoff_remaining_moves = 0;
 
-        state = 0;
+        state = Player.NORMAL;
         available = new ArrayList<>();
     }
 
@@ -121,7 +127,7 @@ public class Player {
     }
 
     public void setState(int state) {
-        if (state != -1 && state != 0 && state != 1 && state != 2 && state != 3) {
+        if (state < Player.LOST && state > Player.LAYOFFED) {
             throw new RuntimeException("Invalid state number!");
             // return;
         }
@@ -133,16 +139,16 @@ public class Player {
     }
 
     public void setLayoff() {
-        this.state = 3;
+        this.state = Player.LAYOFFED;
         this.layoff_remaining_moves = 5;
     }
 
     public boolean minusOneLayoff() {
         // Returns true if the layoff status ends
         this.layoff_remaining_moves--;
-        this.state = 3;
+        this.state = Player.LAYOFFED;
         if (this.layoff_remaining_moves == 0) {
-            this.state = 0;
+            this.state = Player.NORMAL;
             return true;
         }
         return false;
@@ -162,7 +168,7 @@ public class Player {
         critical_counter = 0;
         layoff_counter = 0;
 
-        state = 0;
+        state = Player.NORMAL;
         available.clear();
 
         this.layoff_remaining_moves = 0;
@@ -177,7 +183,7 @@ public class Player {
         System.out.println();
         int[] res = null;
         String result;
-        if (p1.getState() == 2) {
+        if (p1.getState() == Player.FROZEN) {
             res =  results[0][secondPlayer];
             if (secondPlayer == 14 && firstPlayer != 14) {
                 p1.setLayoff();
@@ -189,21 +195,26 @@ public class Player {
             result = "Player1本回合被冰冻，无法出招\n";
             result += ("Player2出招: " + secondPlayer + ":" + moves[secondPlayer]);
             return result;
-        } else if (p2.getState() == 2) {
+        } else if (p2.getState() == Player.FROZEN) {
             res =  results[firstPlayer][0];
+            if (secondPlayer == 14 && firstPlayer != 14) {
+                p1.setLayoff();
+            } else if (firstPlayer == 14 && secondPlayer != 14) {
+                p2.setLayoff();
+            }
             p1.setState(res[0]);
             p2.setState(res[1]);
             result = ("Player1出招: " + firstPlayer + ":" + moves[firstPlayer]);
             result += ("\nPlayer2本回合被冰冻，无法出招");
-        } else if (p1.getState() == 3) {
+        } else if (p1.getState() == Player.LAYOFFED) {
             res = results[1][secondPlayer];
-            p1.setState(res[0] == -1 ? -1 : 3);
+            p1.setState(res[0] == Player.LOST ? Player.LOST: Player.LAYOFFED);
             p2.setState(res[1]);
             result = ("Player1本回合被解雇，只能出 1:防御\n");
             result += ("Player2出招: " + secondPlayer + ":" + moves[secondPlayer]);
-        } else if (p2.getState() == 3) {
+        } else if (p2.getState() == Player.LAYOFFED) {
             res = results[firstPlayer][1];
-            p2.setState(res[1] == -1 ? -1 : 3);
+            p2.setState(res[1] == Player.LOST ? Player.LOST: Player.LAYOFFED);
             p1.setState(res[0]);
             result = ("Player1出招: " + firstPlayer + ":" + moves[firstPlayer]);
             result += ("\nPlayer2本回合被解雇，只能出 1:防御");
@@ -227,17 +238,17 @@ public class Player {
     public static String analyzeState(int[] states) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
         String result;
-        if (states[0] == -1) {
+        if (states[0] == Player.LOST) {
             result = ("Player2 获胜");
-        } else if (states[0] == 1) {
+        } else if (states[0] == Player.WON) {
             result = ("Player1 获胜");
-        } else if (states[0] == 2) {
+        } else if (states[0] == Player.FROZEN) {
             result = ("Player1 被冰冻一回合，游戏继续");
-        } else if (states[1] == 2) {
+        } else if (states[1] == Player.FROZEN) {
             result = ("Player2 被冰冻一回合，游戏继续");            
-        } else if (states[0] == 3) {
+        } else if (states[0] == Player.LAYOFFED) {
             result = ("Player1 被解雇，五回合内只能出防御，游戏继续");            
-        } else if (states[1] == 3) {
+        } else if (states[1] == Player.LAYOFFED) {
             result = ("Player2 被解雇，五回合内只能出防御，游戏继续");            
         } else {
             result = ("游戏继续");
@@ -248,22 +259,22 @@ public class Player {
 
     public static boolean analyzeState(Player p1, Player p2) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
-        if (p1.getState() == -1 || p2.getState() == 1) {
+        if (p1.getState() == Player.LOST || p2.getState() == Player.WON) {
             System.out.println("Player2 获胜");
             return false;
-        } else if (p1.getState() == 1 || p2.getState() == -1) {
+        } else if (p1.getState() == Player.WON || p2.getState() == Player.LOST) {
             System.out.println("Player1 获胜");
             return false;
-        } else if (p1.getState() == 2) {
+        } else if (p1.getState() == Player.FROZEN) {
             System.out.println("Player1 被冰冻一回合，下一回合无法出招，游戏继续");
             return true;
-        } else if (p2.getState() == 2) {
+        } else if (p2.getState() == Player.FROZEN) {
             System.out.println("Player2 被冰冻一回合，下一回合无法出招，游戏继续");  
             return true;          
-        } else if (p1.getState() == 3) {
+        } else if (p1.getState() == Player.LAYOFFED) {
             System.out.println("Player1 被解雇，还剩" + p1.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");   
             return true;         
-        } else if (p2.getState() == 3) {
+        } else if (p2.getState() == Player.LAYOFFED) {
             System.out.println("Player2 被解雇，还剩" + p2.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");    
             return true;        
         } else {
@@ -274,32 +285,32 @@ public class Player {
 
     public static boolean analyzeState(Player p1, Player p2, StringBuilder sb) {
         // -1 Lost; 0 Continue play; 1 Won; 2 Freezed; 3 Layoffed
-        if (p1.getState() == -1 || p2.getState() == 1) {
-            sb.append(getRandomMessage(-1));
+        if (p1.getState() == Player.LOST || p2.getState() == Player.WON) {
+            sb.append(getRandomMessage(Player.LOST));
             System.out.println("Player2 获胜");
             return false;
-        } else if (p1.getState() == 1 || p2.getState() == -1) {
-            sb.append(getRandomMessage(1));
+        } else if (p1.getState() == Player.WON || p2.getState() == Player.LOST) {
+            sb.append(getRandomMessage(Player.WON));
             System.out.println("Player1 获胜");
             return false;
-        } else if (p1.getState() == 2) {
+        } else if (p1.getState() == Player.FROZEN) {
             sb.append("你被电脑冰冻了一回合！下一回合将无法出招。");
             System.out.println("Player1 被冰冻一回合，下一回合无法出招，游戏继续");
             return true;
-        } else if (p2.getState() == 2) {
+        } else if (p2.getState() == Player.FROZEN) {
             sb.append("电脑被你冰冻了一回合！电脑下一回合将无法出招。");  
             System.out.println("Player2 被冰冻一回合，下一回合无法出招，游戏继续");
             return true;          
-        } else if (p1.getState() == 3) {
+        } else if (p1.getState() == Player.LAYOFFED) {
             sb.append("你被电脑解雇了！从下一回合算起，你只能出防御" + p1.getLayoffRemaining() + "回合了。");   
             System.out.println("Player1 被解雇，还剩" + p1.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");
             return true;         
-        } else if (p2.getState() == 3) {
+        } else if (p2.getState() == Player.LAYOFFED) {
             sb.append("电脑被你解雇了！从下一回合算起，电脑只能出防御" + p2.getLayoffRemaining() + "回合！");    
             System.out.println("Player2 被解雇，还剩" + p2.getLayoffRemaining() + "回合（从下一回合算起），游戏继续");
             return true;        
         } else {
-            sb.append(getRandomMessage(0));
+            sb.append(getRandomMessage(Player.NORMAL));
             System.out.println("游戏继续");
             return true;
         }
@@ -318,14 +329,12 @@ public class Player {
 
         System.out.println("当前玩家状态码：" + state);
 
-        if (state == 2) {
+        if (state == Player.FROZEN) {
             System.out.println("当前被冰冻，无法出招");
-            // sc.nextInt();
-            return 2;
-        } else if (state == 3) {
+            return Player.FROZEN;
+        } else if (state == Player.LAYOFFED) {
             System.out.println("当前被解雇，只能出 1:防御");
-            // sc.nextInt();
-            return 3;
+            return Player.LAYOFFED;
         }
 
         /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
@@ -404,11 +413,11 @@ public class Player {
 
         System.out.println("当前玩家状态码：" + state);
 
-        if (state == 2) {
+        if (state == Player.FROZEN) {
             System.out.println("当前被冰冻，无法出招");
             System.out.println();
             return new StatusDTO(counters, state, available);
-        } else if (state == 3) {
+        } else if (state == Player.LAYOFFED) {
             System.out.println("当前被解雇，只能出 1:防御");
             System.out.println();
             available.add(1);
@@ -541,19 +550,22 @@ public class Player {
     }
     
     public int makeMove() {
+        if (Player.sc == null) {
+            Player.sc = new Scanner(System.in);
+        }
         int moving = this.showAvailableMoves();
         int move;
         // moving == 2 被冰冻； moving == 3 被解雇
-        if (moving == 2) {
-            sc.nextInt();
+        if (moving == Player.FROZEN) {
+            Player.sc.nextInt();
             return -1;
-        } else if (moving == 3) {
-            sc.nextInt();
+        } else if (moving == Player.LAYOFFED) {
+            Player.sc.nextInt();
             minusOneLayoff();
             return 1;
         } else {
             while (true) {
-                move = sc.nextInt();
+                move = Player.sc.nextInt();
                 if (!available.contains(move)) {
                     System.out.println("当前回合该招式不合法，请重新输入");
                 } else {
@@ -572,9 +584,9 @@ public class Player {
             this.showAvailableMoves();
         }
         // state == 2 被冰冻； state == 3 被解雇        
-        if (state == 2) {
+        if (state == Player.FROZEN) {
             return -1;
-        } else if (state == 3) {
+        } else if (state == Player.LAYOFFED) {
             minusOneLayoff();
             return 1;
         } else {
@@ -586,9 +598,9 @@ public class Player {
     public int makeWeightedMove() {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
-        if (moving == 2) {
+        if (moving == Player.FROZEN) {
             return -1;
-        } else if (moving == 3) {
+        } else if (moving == Player.LAYOFFED) {
             minusOneLayoff();
             return 1;
         } else {
@@ -616,9 +628,9 @@ public class Player {
     public int makeAdjustedWeightedMove(ComputerMove cm) {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
-        if (moving == 2) {
+        if (moving == Player.FROZEN) {
             return -1;
-        } else if (moving == 3) {
+        } else if (moving == Player.LAYOFFED) {
             minusOneLayoff();
             return 1;
         } else {
@@ -644,11 +656,11 @@ public class Player {
         Random r = new Random();
         int index = r.nextInt(4);
         switch (type){
-            case -1: {
+            case Player.LOST: {
                 return failMessages[index];
-            } case 0: {
+            } case Player.NORMAL: {
                 return normalMessages[index];
-            } case 1: {
+            } case Player.WON: {
                 return winMessages[index];
             } default: {
                 return "";

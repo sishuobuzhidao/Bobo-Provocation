@@ -107,11 +107,4 @@ public class BoboGame {
         System.out.print("\n等待Player1（前端）选择招式...");
         return newStatus;
     }
-
-    // status[0] = seven counters
-    // status[1] = stateNumber -> 1 = normal; 2 = freezed; 3 = layoffed
-    // status[2] = available moves list
-    public StatusDTO returnStatusToFrontend(StatusDTO status) {
-        return status;
-    }
 }

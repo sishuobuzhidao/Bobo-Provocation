@@ -8,7 +8,6 @@ public class ComputerMove {
     private int p1LastRoundMove; // Usually 0-14; -2 -> None; -1 -> Freezed
     private StatusDTO p1LastRoundStatus;
 
-    // private static final int[] MOVEWEIGHTS_OLD = {10, 9, 4, 4, 5, 1, 1, 12, 10, 25, 20, 50, 100, 200, 1000};
     private static int[] moveWeights = {35, 10, 3, 3, 4, 1, 1, 15, 10, 100, 5, 200, 500, 100000, 1000000};
     private int[] tempWeights;
 
@@ -55,13 +54,13 @@ public class ComputerMove {
 
         int p1StatusCode = p1LastRoundStatus.getStatusCode();
 
-        if (p1StatusCode == 2) {
+        if (p1StatusCode == Player.FROZEN) {
             // p1被冰冻
             adjust(0, 1000);
             adjust(7, 1000000);
             adjust(9, 1000000);
             return;
-        } else if (p1StatusCode == 3) {
+        } else if (p1StatusCode == Player.LAYOFFED) {
             // p1被解雇
             adjust(4, 1000000);
             adjust(0, 1000);

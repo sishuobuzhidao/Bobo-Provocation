@@ -33,16 +33,6 @@ public class StatusDTO {
         this.roundResult = null;
         this.shouldContinue = true;
     }
-
-    public StatusDTO(int[] counters, int statusCode, ArrayList<Integer> availableMoves, int p2moveID, String roundResult, boolean shouldContinue) {
-        this.counters = counters;
-        this.statusCode = statusCode;
-        this.availableMoves = availableMoves;
-        this.p1moveID = -2;
-        this.p2moveID = p2moveID;
-        this.roundResult = roundResult;
-        this.shouldContinue = shouldContinue;
-    }
     
     public StatusDTO(int[] counters, int statusCode, ArrayList<Integer> availableMoves, int p1moveID, int p2moveID, String roundResult, boolean shouldContinue) {
         this.counters = counters;
