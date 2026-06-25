@@ -3,16 +3,20 @@ let moves = ["挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "
 let isUltraHardModeOn = false;
 let aiDifficulty = 0;
 
-// 困难模式:去除了计数器面板
-// 超困难模式:将所有招数的按钮都设为可选，若选择到非法招式，后台自动使用随机数挑选可选中的一个
+// toggleMode() activates when pressing the button "mode-toggle"
+// Normal mode: normal; shows available moves by disabling appropriate buttons
+// Ultra hard mode: All move buttons are enabled. If the user chooses a button correponding
+//                  to an illegal move, the backend will randomly choose one available move
+//                  for the user
 function toggleMode() {
     isUltraHardModeOn = !isUltraHardModeOn;
     document.getElementById("mode-toggle").innerText = isUltraHardModeOn ? "困难模式" : "普通模式";
 }
 
-// 简单难度：AI纯随机出招
-// 中等难度：AI固定权重出招
-// 困难难度：AI反应性变化权重出招
+// toggleAIDifficulty() changes the difficulty level
+// 0 -> Easy Difficulty: AI makes moves randomly (weightless)
+// 1 -> Normal Difficulty: AI makes moves with fixed weights
+// 2 -> Hard Difficulty: AI makes moves depending on the user's counters and previous move
 function toggleAIDifficulty() {
     aiDifficulty = (aiDifficulty + 1) % 3;
     if (aiDifficulty === 0) {
@@ -26,7 +30,7 @@ function toggleAIDifficulty() {
     }
 }
 
-// 开始游戏
+// startGame() creates a JSON POST request to backend to start a new game of Bobo Provocation
 function startGame() {
     document.getElementById("start").disabled = true;
     document.getElementById("mode-toggle").disabled = true;
@@ -67,7 +71,9 @@ function startGame() {
     });
 }
 
-// 玩家选择招式，传输到后端，后端java内部权重随机数揭开招式返回，并渲染到前端
+// makeMove(moveID) creates a JSON POST request to backend
+// the backend returns the players' moves and the available moves of the user
+// requires: 0 <= moveID <= 14, moveID is an integer
 function makeMove(moveID) {
     let requestBody = {
         gameStarted: isGameStarted,
@@ -152,7 +158,8 @@ function makeMove(moveID) {
     });
 }
 
-// 通过传入参数availableMoves（ArrayList<Integer>）把能出招的按钮能被点击
+// enableButtons(availableMoves) enables buttons with id in ArrayList<Integer> availableMoves
+// availableMoves is returned from backend
 function enableButtons(availableMoves) {
     if (availableMoves == null) return;
     for (let id of availableMoves) {
@@ -162,18 +169,17 @@ function enableButtons(availableMoves) {
     }
 }
 
-// 使所有按钮可点击
+// enableAllButtons() makes all move buttons enabled (used in ultra hard mode)
 function enableAllButtons() {
     for (let index = 0; index < 15; index++) {
         document.getElementById("Button" + index).disabled = false;                
     }
 }
 
-// 使所有按钮无法点击
+// disableAllButtons() makes all move buttons disabled
+// to prevent users sending doubled move requests to backend
 function disableAllButtons() {
     for (let index = 0; index < 15; index++) {
         document.getElementById("Button" + index).disabled = true;                
     }
 }
-
-// enableButtons([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]); // 测试前端颜色用

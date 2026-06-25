@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class StatusDTO {
     
     private int[] counters;
-    private int statusCode; // statusCode = 1 or 2 or 3; 1 = normal; 2 = freezed; 3 = layoffed
+    private int statusCode; // statusCode = 0 or 2 or 3; 0 = normal; 2 = freezed; 3 = layoffed
     private ArrayList<Integer> availableMoves;
 
     private int p1moveID;
