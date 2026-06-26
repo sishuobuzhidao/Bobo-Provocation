@@ -99,7 +99,7 @@ public class BoboGame {
             // 游戏分出胜负结束
             System.out.println("本局一共" + moveCount + "回合！");
             System.out.println("---------------------------------------");
-            return new StatusDTO(null, -1, null, p1move, p2move, sb.toString(), false);
+            return new StatusDTO(null, Player.LOST, null, p1move, p2move, sb.toString(), false);
         }
 
         // 判断完成后，为下一回合做准备
@@ -113,7 +113,7 @@ public class BoboGame {
 
         cm.updateP1(p1move, newStatus);
 
-        if (p1.getState() == 3) {
+        if (p1.getState() == Player.LAYOFFED) {
             // 减少解雇状态一回合
             p1.minusOneLayoff();
         }
