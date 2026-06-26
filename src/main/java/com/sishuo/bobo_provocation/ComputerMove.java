@@ -1,6 +1,6 @@
 package com.sishuo.bobo_provocation;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // This class is for a better AI move system based on weights
 // stores the frontend users's move and StatusDTO last round
@@ -38,7 +38,7 @@ public class ComputerMove {
     // the first ArrayList is all availableMoves the player can make
     // the method generates a cumulative weight table in cumulative
     // returns the largest number in cumulative (aka the last number)
-    public int generateCumulativeList(ArrayList<Integer> available, ArrayList<Integer> cumulative) {
+    public int generateCumulativeList(List<Integer> available, List<Integer> cumulative) {
         int weight = 0;
 
         for (int i : available) {
@@ -52,7 +52,7 @@ public class ComputerMove {
     // updateWeights(p2AvailableMoves) updates this.tempWeights
     // by examining information from this.p1LastRoundMove, this.p1LastRoundStatus and p2AvailableMoves
     // time: O(1)
-    public void updateWeights(ArrayList<Integer> p2AvailableMoves) {
+    public void updateWeights(List<Integer> p2AvailableMoves) {
         if (p1LastRoundStatus == null) {
             // game just started -> No statusDTO
             adjust(Player.MOVE_PROVOCATION, 1000);
@@ -60,9 +60,6 @@ public class ComputerMove {
             return;
         }
 
-        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
-             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
-        */
         this.tempWeights = ComputerMove.moveWeights.clone(); // initialize the array
 
         int[] counters = p1LastRoundStatus.getCounters();
@@ -86,23 +83,27 @@ public class ComputerMove {
             return;
         }
 
-        if (p2AvailableMoves.contains(Player.MOVE_SMALL_GORILLA)) {
-            if (counters[COUNTER_PROVOCATIONS_ACCU] < 5 && counters[COUNTER_PROVOCATIONS_UNUSED] <= 3 && counters[COUNTER_DEFENSES] == 0) {
+        if (p2AvailableMoves.contains(Player.MOVE_SMALL_GORILLA) 
+            && counters[COUNTER_PROVOCATIONS_ACCU] < 5 
+            && counters[COUNTER_PROVOCATIONS_UNUSED] <= 3 
+            && counters[COUNTER_DEFENSES] == 0) {
                 // 有小猩猩对面没有防御，就出小猩猩
                 adjust(Player.MOVE_SMALL_GORILLA, 100000);
                 return;
             }
-        }
-        if (p2AvailableMoves.contains(Player.MOVE_FREEZE)) {
-            if (counters[COUNTER_PROVOCATIONS_ACCU] <= 5 && counters[COUNTER_DEFENSES] <= 2) {
+        
+        if (p2AvailableMoves.contains(Player.MOVE_FREEZE) 
+            && counters[COUNTER_PROVOCATIONS_ACCU] <= 5 
+            && counters[COUNTER_DEFENSES] <= 2) {
                 adjust(Player.MOVE_FREEZE, 100000);
             }
-        }
-        if (p2AvailableMoves.contains(Player.MOVE_LARGE_GORILLA)) {
-            if (counters[COUNTER_PROVOCATIONS_ACCU] <= 6 && counters[COUNTER_DEFENSES] <= 2) {
+        
+        if (p2AvailableMoves.contains(Player.MOVE_LARGE_GORILLA) 
+            && counters[COUNTER_PROVOCATIONS_ACCU] <= 6 
+            && counters[COUNTER_DEFENSES] <= 2) {
                 adjust(Player.MOVE_LARGE_GORILLA, 100000);
             }
-        }
+        
         if (!p2AvailableMoves.contains(Player.MOVE_STRAIGHT_PUNCH) 
             && !p2AvailableMoves.contains(Player.MOVE_FREEZE) 
             && !p2AvailableMoves.contains(Player.MOVE_LARGE_GORILLA)) {
@@ -162,8 +163,7 @@ public class ComputerMove {
                 adjust(Player.MOVE_STRAIGHT_PUNCH, -3);
                 adjust(Player.MOVE_SMALL_GORILLA, -5);
                 break;
-            case Player.MOVE_LEFT_DODGE:
-            case Player.MOVE_RIGHT_DODGE:
+            case Player.MOVE_LEFT_DODGE, Player.MOVE_RIGHT_DODGE:
                 leftRightPunchUpdate();
                 break;
             case Player.MOVE_STRAIGHT_PUNCH:
@@ -179,15 +179,10 @@ public class ComputerMove {
                 adjust(Player.MOVE_UPPERCUT, 7);
                 adjust(Player.MOVE_STRAIGHT_PUNCH, 8);
                 break;
-            case Player.MOVE_FREEZE:
+            case Player.MOVE_FREEZE, Player.MOVE_LARGE_GORILLA:
                 adjust(Player.MOVE_PROVOCATION, 10);  // 趁机挑衅
                 adjust(Player.MOVE_STRAIGHT_PUNCH, 15);  // 直拳压制
                 adjust(Player.MOVE_SMALL_GORILLA, 20);  // 小猩猩压制
-                break;
-            case Player.MOVE_LARGE_GORILLA:
-                adjust(Player.MOVE_PROVOCATION, 10);
-                adjust(Player.MOVE_STRAIGHT_PUNCH, 15); // 对面出大猩猩己方防住，如果有直拳，就出了偷刀
-                adjust(Player.MOVE_SMALL_GORILLA, 20);
                 break;
             case Player.MOVE_CRITICAL:
                 adjust(Player.MOVE_PROVOCATION, 20);
@@ -198,6 +193,8 @@ public class ComputerMove {
                 // 电脑也出了解雇对撞才活着，否则只能出防御
                 adjust(Player.MOVE_PROVOCATION, 20);
                 adjust(Player.MOVE_STRAIGHT_PUNCH, 15);
+                break;
+            default:
                 break;
         }
 

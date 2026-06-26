@@ -56,10 +56,10 @@ function startGame() {
             document.getElementById("p2-status").innerText = "对局中";            
             disableAllButtons();
             
-            if (!isUltraHardModeOn) {
-                enableButtons(data.availableMoves);
-            } else {
+            if (isUltraHardModeOn) {
                 enableAllButtons();
+            } else {
+                enableButtons(data.availableMoves);
             }
         }
     })
@@ -77,8 +77,7 @@ function startGame() {
 function makeMove(moveID) {
     let requestBody = {
         gameStarted: isGameStarted,
-        move: moveID, 
-        isUltraHardModeOn: isUltraHardModeOn
+        move: moveID
     };
 
     disableAllButtons(); // 出招瞬间立刻封锁所有动作，防止连击鬼畜
@@ -132,10 +131,10 @@ function makeMove(moveID) {
             } else {
                 // 正常状态
                 document.getElementById("p1-status").innerText = "对局中";
-                if (!isUltraHardModeOn) {
-                    enableButtons(data.availableMoves); 
-                } else {
+                if (isUltraHardModeOn) {
                     enableAllButtons();
+                } else {
+                    enableButtons(data.availableMoves); 
                 }
             }
         } else {

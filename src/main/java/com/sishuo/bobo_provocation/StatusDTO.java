@@ -1,6 +1,6 @@
 package com.sishuo.bobo_provocation;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // Class for a JSON package for the status of a Player before making their move
 // only includes relevant constructors, getters and setters
@@ -9,7 +9,7 @@ public class StatusDTO {
     
     private int[] counters;
     private int statusCode; // statusCode = 0 or 2 or 3; 0 = normal; 2 = freezed; 3 = layoffed
-    private ArrayList<Integer> availableMoves;
+    private List<Integer> availableMoves;
 
     private int p1moveID;
     private int p2moveID;
@@ -26,7 +26,7 @@ public class StatusDTO {
         this.shouldContinue = false;
     }
 
-    public StatusDTO(int[] counters, int statusCode, ArrayList<Integer> availableMoves) {
+    public StatusDTO(int[] counters, int statusCode, List<Integer> availableMoves) {
         this.counters = counters;
         this.statusCode = statusCode;
         this.availableMoves = availableMoves;
@@ -36,7 +36,7 @@ public class StatusDTO {
         this.shouldContinue = true;
     }
     
-    public StatusDTO(int[] counters, int statusCode, ArrayList<Integer> availableMoves, int p1moveID, int p2moveID, String roundResult, boolean shouldContinue) {
+    public StatusDTO(int[] counters, int statusCode, List<Integer> availableMoves, int p1moveID, int p2moveID, String roundResult, boolean shouldContinue) {
         this.counters = counters;
         this.statusCode = statusCode;
         this.availableMoves = availableMoves;
@@ -63,11 +63,11 @@ public class StatusDTO {
         this.statusCode = statusCode;
     }
 
-    public ArrayList<Integer> getAvailableMoves() {
+    public List<Integer> getAvailableMoves() {
         return this.availableMoves;
     }
 
-    public void setAvailableMoves(ArrayList<Integer> availableMoves) {
+    public void setAvailableMoves(List<Integer> availableMoves) {
         this.availableMoves = availableMoves;
     }
 

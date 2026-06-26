@@ -10,6 +10,7 @@ import java.util.Random;
 public class BoboController {
 
     public BoboGame game = new BoboGame();
+    private Random r = new Random();
 
     // handleMove(requestBody) accepts a POST json package from frontend
     // called during a game, returns a StatusDTO calculated by BoboGame.java
@@ -18,13 +19,11 @@ public class BoboController {
     public StatusDTO handleMove(@RequestBody Map<String, Object> requestBody) {
 
         System.out.println();
-        // System.out.println("----------------------------------------");
         // 获取前端传来的数据
         Boolean isGameStarted = Boolean.parseBoolean(requestBody.get("gameStarted").toString());
         Integer p1move = Integer.parseInt(requestBody.get("move").toString());
-        Boolean isUltraHardModeOn = Boolean.parseBoolean(requestBody.get("isUltraHardModeOn").toString());
 
-        if (!isGameStarted) {
+        if (Boolean.FALSE.equals(isGameStarted)) {
             if (p1move >= Player.MOVE_PROVOCATION && p1move <= Player.MOVE_LAYOFF) {
                 System.out.println("Player1（前端）出招：" + p1move + ":" + Player.moves[p1move]);
             } else {
@@ -33,7 +32,6 @@ public class BoboController {
 
             // 测试招数对应使用的
             // 随机出招（暂时0-14随机数）
-            Random r = new Random();
             int computerMove = r.nextInt(Player.MOVE_PROVOCATION, Player.MOVE_LAYOFF + 1);
             System.out.println("Player2（电脑）出招：" + computerMove + ":" + Player.moves[computerMove]);
             
@@ -43,7 +41,7 @@ public class BoboController {
         } else {
             // isGameStarted = true: 游戏已经开始，不能乱出招
             // 返回BoboGame类里方法返回的StatusDTO
-            return this.game.startOneNewRound(p1move, isUltraHardModeOn);
+            return this.game.startOneNewRound(p1move);
         }
         
     }
@@ -64,15 +62,13 @@ public class BoboController {
             System.out.println("游戏难度代码：" + aiDifficulty + "\n");
             System.out.println("----------------------------------------");
             System.out.println("Player1（前端）目前状态：");
-            StatusDTO status = this.game.runNewGame(false, aiDifficulty);
-            return status;
+            return this.game.runNewGame(false, aiDifficulty);
         } else if (message.equals("ultra")) {
             System.out.println("\n前端发起新一局困难模式游戏");
             System.out.println("游戏难度代码：" + aiDifficulty + "\n");
             System.out.println("----------------------------------------");
             System.out.println("Player1（前端）目前状态：");
-            StatusDTO status = this.game.runNewGame(true, aiDifficulty);
-            return status;
+            return this.game.runNewGame(true, aiDifficulty);
         } else {
             return null;
         }

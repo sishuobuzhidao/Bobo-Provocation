@@ -7,6 +7,7 @@ public class BoboGame {
     public Player p1; // p1 is always the frontend user
     public Player p2; // p2 is always the backend computer
     public ComputerMove cm;
+    public boolean isUltraHardModeOn;
     public int aiDifficulty;
     public int moveCount;
 
@@ -18,6 +19,7 @@ public class BoboGame {
         this.p1 = new Player();
         this.p2 = new Player();
         this.cm = new ComputerMove();
+        this.isUltraHardModeOn = false;
         this.aiDifficulty = -1;
         this.moveCount = 0;
     }
@@ -26,8 +28,8 @@ public class BoboGame {
     // updates this.isUltraHardModeOn and this.aiDifficulty
     public StatusDTO runNewGame(boolean isUltraHardModeOn, int aiDifficulty) {
         // 这里p1是玩家，p2是随机出招的电脑
-        // String movesAndIndices = "0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 | 8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
         this.moveCount = 0;
+        this.isUltraHardModeOn = isUltraHardModeOn;
         this.aiDifficulty = aiDifficulty;
         p1.reset();
         p2.reset();
@@ -54,7 +56,7 @@ public class BoboGame {
     // then make the computer's move and calculates the round result
     // finally, prints the current information of the frontend user after this round
     // and returns to frontend a StatusDTO object
-    public StatusDTO startOneNewRound(int p1move, boolean isUltraHardModeOn) {
+    public StatusDTO startOneNewRound(int p1move) {
         System.out.println();
         this.moveCount++;
 

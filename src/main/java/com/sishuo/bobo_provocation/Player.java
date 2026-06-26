@@ -2,7 +2,7 @@ package com.sishuo.bobo_provocation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,7 +10,8 @@ import java.util.Scanner;
 // contains the state and counters of the Player during a game
 
 public class Player {
-    public static Scanner sc;
+    public static Scanner sc = null;
+    private static Random r = new Random();
 
     private int provocationsAccu;
     private int provocationsUnused;
@@ -30,8 +31,12 @@ public class Player {
     public static final int FROZEN = 2;
     public static final int LAYOFFED = 3;
 
-    private ArrayList<Integer> available;
+    private List<Integer> available;
 
+    /*  -2:未在游戏中的占位值 | -1:被冰冻空过 |
+        0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
+        8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇
+    */
     public static final int MOVE_NULL = -2;
     public static final int MOVE_FROZEN_NULL = -1;
     public static final int MOVE_PROVOCATION = 0;
@@ -52,7 +57,7 @@ public class Player {
 
 
     private static int[][][] results;
-    public static String[] moves = {"挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"};
+    protected static String[] moves = {"挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"};
     private static int[] moveWeights = {10, 9, 4, 4, 5, 1, 1, 12, 10, 25, 20, 50, 100, 200, 1000};
 
     private static String[] failMessages = {"电脑获胜！你输了！再来一局？", "电脑赢了！祝您下次好运！", "你输了！游戏结束！", "很抱歉，你输了！再来一局？"};
@@ -152,14 +157,13 @@ public class Player {
     // setState() sets a Player's state (state should be in -1, 0, 1, 2, 3)
     public void setState(int state) {
         if (state < Player.LOST || state > Player.LAYOFFED) {
-            throw new RuntimeException("Invalid state number!");
-            // return;
+            return;
         }
         this.state = state;
     }
 
     // getAvailableMovesArray() returns this.available
-    public ArrayList<Integer> getAvailableMovesArray() {
+    public List<Integer> getAvailableMovesArray() {
         return this.available;
     }
 
@@ -363,9 +367,7 @@ public class Player {
     // does not print anything to console and does not check this.state (assumes state is NORMAL)
     public void updateAvailableMovesArray() {
         this.available.clear();
-        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
-             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
-        */
+        
         this.available.add(MOVE_PROVOCATION);
         this.available.add(MOVE_DEFENSE);
         this.available.add(MOVE_LEFT_DODGE);
@@ -399,12 +401,7 @@ public class Player {
             this.available.add(MOVE_LAYOFF);
         }
         
-        this.available.sort(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return o1 - o2;
-            }    
-        });
+        this.available.sort((o1, o2) -> (o1 - o2));
     }
 
 
@@ -482,8 +479,7 @@ public class Player {
     public void updateProvocationUnused(int cost) {
         // 优先扣除已兑换的挑衅数量，再扣除未兑换的挑衅数量
         if (cost <= provocationsAccu - provocationsUnused) {
-            // 总共的已兑换挑衅数量大于等于总花费
-            return;
+            // 总共的已兑换挑衅数量大于等于总花费          
         } else {
             this.provocationsUnused -= cost - (this.provocationsAccu - this.provocationsUnused);
         }
@@ -491,9 +487,6 @@ public class Player {
 
     // analyzeMove(move) inputs a moveID (0 <= move <= 14) and updates the Player's counters
     public void analyzeMove(int move) {
-        /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
-             8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
-        */
         switch (move) {
             case MOVE_PROVOCATION: //挑衅
                 provocationsAccu++;
@@ -614,7 +607,6 @@ public class Player {
                 cumulatedAvailableMoveWeights.add(weight);
             }
 
-            Random r = new Random();
             int randInt = r.nextInt(1, weight + 1);
 
             int index = Collections.binarySearch(cumulatedAvailableMoveWeights, randInt);
@@ -644,7 +636,6 @@ public class Player {
             int weight = cm.generateCumulativeList(this.available, cumulatedAvailableMoveWeights);
 
             System.out.println("Player2权重表:" + cumulatedAvailableMoveWeights.toString());
-            Random r = new Random();
             int randInt = r.nextInt(1, weight + 1);
 
             int index = Collections.binarySearch(cumulatedAvailableMoveWeights, randInt);
@@ -661,7 +652,6 @@ public class Player {
     // stored in Player.failMessages, Player.normalMessages and Player.winMessages
     // type can only be -1, 0, 1 for correct usage
     public static String getRandomMessage(int type) {
-        Random r = new Random();
         int index = r.nextInt(4);
         switch (type){
             case Player.LOST: {
