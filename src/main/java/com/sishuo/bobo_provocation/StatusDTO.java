@@ -20,7 +20,7 @@ public class StatusDTO {
         this.counters = null;
         this.statusCode = -1;
         this.availableMoves = null;
-        this.p1moveID = -2;
+        this.p1moveID = Player.MOVE_NULL;
         this.p2moveID = p2moveID;
         this.roundResult = roundResult;
         this.shouldContinue = false;
@@ -30,8 +30,8 @@ public class StatusDTO {
         this.counters = counters;
         this.statusCode = statusCode;
         this.availableMoves = availableMoves;
-        this.p1moveID = -1;
-        this.p2moveID = -1;
+        this.p1moveID = Player.MOVE_NULL;
+        this.p2moveID = Player.MOVE_NULL;
         this.roundResult = null;
         this.shouldContinue = true;
     }

@@ -32,7 +32,7 @@ public class BoboGame {
         p1.reset();
         p2.reset();
         StatusDTO status = p1.showStatus(); // 初始化status
-        cm.updateP1(-2, null);
+        cm.updateP1(Player.MOVE_NULL, null);
         System.out.print("\n等待Player1（前端）选择招式...");
         return status;
     }
@@ -58,12 +58,12 @@ public class BoboGame {
         System.out.println();
         this.moveCount++;
 
-        if (p1move >= 0 && p1move <= 14) {
-            // ultra hard mode is not on
+        if (p1move >= Player.MOVE_PROVOCATION && p1move <= Player.MOVE_LAYOFF) {
+            // 0 <= p1move <= 14
             System.out.println("Player1（前端）出招：" + p1move + ":" + Player.moves[p1move]);
 
             if (isUltraHardModeOn && !p1.getAvailableMovesArray().contains(p1move)) {
-                // 困难模式下玩家选择了不合法招式
+                // frontend chose an illegal move (in ultra hard mode)
                 p1move = p1.makeRandomMove(false);
                 System.out.println("检测到选择招式不合法，已使用随机合法招式替换。");
                 System.out.println("招式被替换为：" + p1move + ":" + Player.moves[p1move]);
@@ -75,17 +75,17 @@ public class BoboGame {
         System.out.println();
         System.out.println("Player2（电脑）目前状态：");
         int p2move = makeP2Move();
-        if (p2move != -1) {
+        if (p2move != Player.MOVE_FROZEN_NULL) {
             System.out.println("Player2（电脑）出招：" + p2move + ":" + Player.moves[p2move]);
         } else {
             System.out.println("Player2（电脑）本回合被冰冻，无法出招");
         }
          
-        if (p1move != -1) {
+        if (p1move >= Player.MOVE_PROVOCATION && p1move <= Player.MOVE_LAYOFF) {
             p1.analyzeMove(p1move);
         }
 
-        if (p2move != -1) {
+        if (p2move >= Player.MOVE_PROVOCATION && p2move <= Player.MOVE_LAYOFF) {
             p2.analyzeMove(p2move);
         }
 
@@ -97,7 +97,9 @@ public class BoboGame {
 
         if (!shouldContinue) {
             // 游戏分出胜负结束
-            System.out.println("本局一共" + moveCount + "回合！");
+            String moveCountReveal = ("本局一共" + moveCount + "回合！");
+            sb.append("\n" + moveCountReveal);
+            System.out.println(moveCountReveal);
             System.out.println("---------------------------------------");
             return new StatusDTO(null, Player.LOST, null, p1move, p2move, sb.toString(), false);
         }

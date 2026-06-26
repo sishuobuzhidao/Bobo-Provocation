@@ -25,7 +25,7 @@ public class BoboController {
         Boolean isUltraHardModeOn = Boolean.parseBoolean(requestBody.get("isUltraHardModeOn").toString());
 
         if (!isGameStarted) {
-            if (p1move >= 0 && p1move <= 14) {
+            if (p1move >= Player.MOVE_PROVOCATION && p1move <= Player.MOVE_LAYOFF) {
                 System.out.println("Player1（前端）出招：" + p1move + ":" + Player.moves[p1move]);
             } else {
                 System.out.println("Player1（前端）本回合没有出招");
@@ -34,7 +34,7 @@ public class BoboController {
             // 测试招数对应使用的
             // 随机出招（暂时0-14随机数）
             Random r = new Random();
-            int computerMove = r.nextInt(0, 15);
+            int computerMove = r.nextInt(Player.MOVE_PROVOCATION, Player.MOVE_LAYOFF + 1);
             System.out.println("Player2（电脑）出招：" + computerMove + ":" + Player.moves[computerMove]);
             
             int[] result = Player.calculateState(p1move, computerMove);

@@ -32,6 +32,25 @@ public class Player {
 
     private ArrayList<Integer> available;
 
+    public static final int MOVE_NULL = -2;
+    public static final int MOVE_FROZEN_NULL = -1;
+    public static final int MOVE_PROVOCATION = 0;
+    public static final int MOVE_DEFENSE = 1;
+    public static final int MOVE_LEFT_DODGE = 2;
+    public static final int MOVE_RIGHT_DODGE = 3;
+    public static final int MOVE_UPPERCUT = 4;
+    public static final int MOVE_LEFT_HOOK = 5;
+    public static final int MOVE_RIGHT_HOOK = 6;
+    public static final int MOVE_STRAIGHT_PUNCH = 7;
+    public static final int MOVE_REBOUND = 8;
+    public static final int MOVE_SMALL_GORILLA = 9;
+    public static final int MOVE_DOUBLE_DEFENSE = 10;
+    public static final int MOVE_FREEZE = 11;
+    public static final int MOVE_LARGE_GORILLA = 12;
+    public static final int MOVE_CRITICAL = 13;
+    public static final int MOVE_LAYOFF = 14;
+
+
     private static int[][][] results;
     public static String[] moves = {"挑衅", "防御", "左避", "右避", "上勾拳", "左勾拳", "右勾拳", "直拳", "反弹", "小猩猩", "双层防御", "冰冻", "大猩猩", "致命一击", "解雇"};
     private static int[] moveWeights = {10, 9, 4, 4, 5, 1, 1, 12, 10, 25, 20, 50, 100, 200, 1000};
@@ -45,63 +64,63 @@ public class Player {
         // 返回的数组：index 0 是1号玩家状态码，index 1 是2号玩家状态码
         // 状态码：-1=输, 0=继续(抵消/无事发生), 1=赢, 2=被冰冻, 3=被解雇
         int[][][] results0 = {
-            // 0: 挑衅
+            // 0: 挑衅 Provocation
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 1: 防御
+            // 1: 防御 Defense
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 2: 左避
+            // 2: 左避 Left Dodge
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 3: 右避
+            // 3: 右避 Right Dodge
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 4: 上勾拳
+            // 4: 上勾拳 Upper Hook
             {
                 {0, 0}, {1, -1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {-1, 1}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 5: 左勾拳
+            // 5: 左勾拳 Left Hook
             {
                 {0, 0}, {0, 0}, {1, -1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 6: 右勾拳
+            // 6: 右勾拳 Right Hook
             {
                 {0, 0}, {0, 0}, {0, 0}, {1, -1}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {0, 0}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 7: 直拳
+            // 7: 直拳 Stright Punch
             {
                 {1, -1}, {0, 0}, {0, 0}, {0, 0}, {1, -1}, {1, -1}, {1, -1}, {0, 0}, {-1, 1}, {-1, 1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 8: 反弹
+            // 8: 反弹 Rebound
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {1, -1}, {0, 0}, {0, 0}, {1, -1}, {0, 0}, {1, -1}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 9: 小猩猩
+            // 9: 小猩猩 Small Gorilla
             {
                 {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {-1, 1}, {0, 0}, {0, 0}, {2, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 10: 双层防御
+            // 10: 双层防御 Double Defense
             {
                 {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {-1, 1}, {3, 0}
             },
-            // 11: 冰冻
+            // 11: 冰冻 Freeze
             {
                 {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 2}, {0, 0}, {0, 0}, {-1, 1}, {-1, 1}, {3, 0}
             },
-            // 12: 大猩猩
+            // 12: 大猩猩 Large Gorilla
             {
                 {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {0, 0}, {1, -1}, {0, 0}, {-1, 1}, {3, 0}
             },
-            // 13: 致命一击
+            // 13: 致命一击 Critical Strike
             {
                 {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {1, -1}, {0, 0}, {3, 0}
             },
-            // 14: 解雇
+            // 14: 解雇 Layoff
             {
                 {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 3}, {0, 0}
             }
@@ -125,6 +144,7 @@ public class Player {
         available = new ArrayList<>();
     }
 
+    // getState() returns this.state
     public int getState() {
         return this.state;
     }
@@ -201,9 +221,9 @@ public class Player {
         String result;
         if (p1.getState() == Player.FROZEN) {
             res =  results[0][secondPlayer];
-            if (secondPlayer == 14 && firstPlayer != 14) {
+            if (secondPlayer == MOVE_LAYOFF && firstPlayer != MOVE_LAYOFF) {
                 p1.setLayoff();
-            } else if (firstPlayer == 14 && secondPlayer != 14) {
+            } else if (firstPlayer == MOVE_LAYOFF && secondPlayer != MOVE_LAYOFF) {
                 p2.setLayoff();
             }
             p1.setState(res[0]);
@@ -212,10 +232,10 @@ public class Player {
             result += ("Player2出招: " + secondPlayer + ":" + moves[secondPlayer]);
             return result;
         } else if (p2.getState() == Player.FROZEN) {
-            res =  results[firstPlayer][0];
-            if (secondPlayer == 14 && firstPlayer != 14) {
+            res =  results[firstPlayer][MOVE_PROVOCATION]; // Use MOVE_PROVOCATION as a placeholder
+            if (secondPlayer == MOVE_LAYOFF && firstPlayer != MOVE_LAYOFF) {
                 p1.setLayoff();
-            } else if (firstPlayer == 14 && secondPlayer != 14) {
+            } else if (firstPlayer == MOVE_LAYOFF && secondPlayer != MOVE_LAYOFF) {
                 p2.setLayoff();
             }
             p1.setState(res[0]);
@@ -229,16 +249,16 @@ public class Player {
             result = ("Player1本回合被解雇，只能出 1:防御\n");
             result += ("Player2出招: " + secondPlayer + ":" + moves[secondPlayer]);
         } else if (p2.getState() == Player.LAYOFFED) {
-            res = results[firstPlayer][1];
+            res = results[firstPlayer][MOVE_DEFENSE];
             p2.setState(res[1] == Player.LOST ? Player.LOST: Player.LAYOFFED);
             p1.setState(res[0]);
             result = ("Player1出招: " + firstPlayer + ":" + moves[firstPlayer]);
             result += ("\nPlayer2本回合被解雇，只能出 1:防御");
         } else {
             res =  results[firstPlayer][secondPlayer];
-            if (secondPlayer == 14 && firstPlayer != 14) {
+            if (secondPlayer == MOVE_LAYOFF && firstPlayer != MOVE_LAYOFF) {
                 p1.setLayoff();
-            } else if (firstPlayer == 14 && secondPlayer != 14) {
+            } else if (firstPlayer == MOVE_LAYOFF && secondPlayer != MOVE_LAYOFF) {
                 p2.setLayoff();
             }
             p1.setState(res[0]);
@@ -346,37 +366,37 @@ public class Player {
         /* 0:挑衅 | 1:防御 | 2:左避 | 3:右避 | 4:上勾拳 | 5:左勾拳 | 6:右勾拳 | 7:直拳 |
              8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
         */
-        this.available.add(0);
-        this.available.add(1);
-        this.available.add(2);
-        this.available.add(3);
-        this.available.add(4);
-        this.available.add(5);
-        this.available.add(6);
+        this.available.add(MOVE_PROVOCATION);
+        this.available.add(MOVE_DEFENSE);
+        this.available.add(MOVE_LEFT_DODGE);
+        this.available.add(MOVE_RIGHT_DODGE);
+        this.available.add(MOVE_UPPERCUT);
+        this.available.add(MOVE_LEFT_HOOK);
+        this.available.add(MOVE_RIGHT_HOOK);
         
         if (defenses >= 2) {
-            this.available.add(10);
+            this.available.add(MOVE_DOUBLE_DEFENSE);
         }
         if (defenses >= 1) {
-            this.available.add(8);
+            this.available.add(MOVE_REBOUND);
         }
         if (provocationsUnused >= 3) {
-            this.available.add(9);
+            this.available.add(MOVE_SMALL_GORILLA);
         } 
         if (provocationsUnused >= 1) {
-            this.available.add(7);
+            this.available.add(MOVE_STRAIGHT_PUNCH);
         }
         if (freezeCounter >= 5) {
-            this.available.add(11);
+            this.available.add(MOVE_FREEZE);
         }
         if (largeGorillaCounter >= 6) {
-            this.available.add(12);
+            this.available.add(MOVE_LARGE_GORILLA);
         }
         if (criticalCounter >= 7) {
-            this.available.add(13);
+            this.available.add(MOVE_CRITICAL);
         }
         if (layoffCounter >= 10) {
-            this.available.add(14);
+            this.available.add(MOVE_LAYOFF);
         }
         
         this.available.sort(new Comparator<Integer>() {
@@ -443,7 +463,7 @@ public class Player {
         } else if (state == Player.LAYOFFED) {
             System.out.println("当前被解雇，只能出 1:防御");
             System.out.println();
-            available.add(1);
+            available.add(MOVE_DEFENSE);
             return new StatusDTO(counters, state, available);
         }
 
@@ -454,7 +474,7 @@ public class Player {
             System.out.print(i + ":" + moves[i] + "; ");
         }
 
-        return new StatusDTO(counters, 1, available);
+        return new StatusDTO(counters, Player.NORMAL, available);
     }
 
     // updateProvocationUnused(cost) updates this.provocationUnused
@@ -475,7 +495,7 @@ public class Player {
              8:反弹 | 9:小猩猩 | 10:双层防御 | 11:冰冻 | 12:大猩猩 | 13:致命一击 | 14:解雇";
         */
         switch (move) {
-            case 0: //挑衅
+            case MOVE_PROVOCATION: //挑衅
                 provocationsAccu++;
                 provocationsUnused++;
                 freezeCounter++;
@@ -483,45 +503,45 @@ public class Player {
                 criticalCounter++;
                 layoffCounter++;
                 break;
-            case 1: //防御
+            case MOVE_DEFENSE: //防御
                 defenses++;
                 break;
-            case 7: //直拳
+            case MOVE_STRAIGHT_PUNCH: //直拳
                 provocationsUnused--;
                 break;
-            case 8: //反弹
+            case MOVE_REBOUND: //反弹
                 defenses--;
                 break;
-            case 9: //小猩猩
+            case MOVE_SMALL_GORILLA: //小猩猩
                 provocationsUnused -= 3;
                 break;
-            case 10: //双层防御
+            case MOVE_DOUBLE_DEFENSE: //双层防御
                 defenses -= 2;
                 break;
-            case 11: //冰冻
+            case MOVE_FREEZE: //冰冻
                 updateProvocationUnused(5);
                 freezeCounter = 0;
                 break;
-            case 12: //大猩猩
+            case MOVE_LARGE_GORILLA: //大猩猩
                 updateProvocationUnused(6);
                 freezeCounter = 0;
                 largeGorillaCounter = 0;
                 break;
-            case 13: //致命一击
+            case MOVE_CRITICAL: //致命一击
                 updateProvocationUnused(7);
                 freezeCounter = 0;
                 largeGorillaCounter = 0;
                 criticalCounter = 0;
                 break;
-            case 14: //解雇
+            case MOVE_LAYOFF: //解雇
                 updateProvocationUnused(10);
                 freezeCounter = 0;
                 largeGorillaCounter = 0;
                 criticalCounter = 0;
                 layoffCounter = 0;
                 break;
-            // default:
-            //     break;
+            default:
+                break;
         }
     }
     
@@ -536,11 +556,11 @@ public class Player {
         // moving == 2 被冰冻； moving == 3 被解雇
         if (moving == Player.FROZEN) {
             Player.sc.nextInt();
-            return -1;
+            return MOVE_FROZEN_NULL;
         } else if (moving == Player.LAYOFFED) {
             Player.sc.nextInt();
             minusOneLayoff();
-            return 1;
+            return MOVE_DEFENSE;
         } else {
             while (true) {
                 move = Player.sc.nextInt();
@@ -565,10 +585,10 @@ public class Player {
         }
         // state == 2 被冰冻； state == 3 被解雇        
         if (state == Player.FROZEN) {
-            return -1;
+            return MOVE_FROZEN_NULL;
         } else if (state == Player.LAYOFFED) {
             minusOneLayoff();
-            return 1;
+            return MOVE_DEFENSE;
         } else {
             Collections.shuffle(available);
             return available.get(0);
@@ -581,10 +601,10 @@ public class Player {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
         if (moving == Player.FROZEN) {
-            return -1;
+            return MOVE_FROZEN_NULL;
         } else if (moving == Player.LAYOFFED) {
             minusOneLayoff();
-            return 1;
+            return MOVE_DEFENSE;
         } else {
             ArrayList<Integer> cumulatedAvailableMoveWeights = new ArrayList<>();
             int weight = 0;
@@ -614,10 +634,10 @@ public class Player {
         int moving = this.showAvailableMoves();
         // moving == 2 被冰冻； moving == 3 被解雇
         if (moving == Player.FROZEN) {
-            return -1;
+            return MOVE_FROZEN_NULL;
         } else if (moving == Player.LAYOFFED) {
             minusOneLayoff();
-            return 1;
+            return MOVE_DEFENSE;
         } else {
             cm.updateWeights(this.available); // 在cm内更新权重
             ArrayList<Integer> cumulatedAvailableMoveWeights = new ArrayList<>();

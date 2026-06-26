@@ -22,7 +22,7 @@ public class ComputerMove {
     public static final int COUNTER_LAYOFF = 6;
 
     public ComputerMove() {
-        this.p1LastRoundMove = -2;
+        this.p1LastRoundMove = Player.MOVE_NULL;
         this.p1LastRoundStatus = null;
         this.tempWeights = ComputerMove.moveWeights.clone();
     }
@@ -55,7 +55,7 @@ public class ComputerMove {
     public void updateWeights(ArrayList<Integer> p2AvailableMoves) {
         if (p1LastRoundStatus == null) {
             // game just started -> No statusDTO
-            adjust(0, 1000);
+            adjust(Player.MOVE_PROVOCATION, 1000);
             // 挑衅权重增加
             return;
         }
@@ -75,127 +75,129 @@ public class ComputerMove {
 
         if (p1StatusCode == Player.FROZEN) {
             // p1被冰冻
-            adjust(0, 1000);
-            adjust(7, 1000000);
-            adjust(9, 1000000);
+            adjust(Player.MOVE_PROVOCATION, 1000);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 1000000);
+            adjust(Player.MOVE_SMALL_GORILLA, 1000000);
             return;
         } else if (p1StatusCode == Player.LAYOFFED) {
             // p1被解雇
-            adjust(4, 1000000);
-            adjust(0, 1000);
+            adjust(Player.MOVE_UPPERCUT, 1000000);
+            adjust(Player.MOVE_PROVOCATION, 1000);
             return;
         }
 
-        if (p2AvailableMoves.contains(9)) {
+        if (p2AvailableMoves.contains(Player.MOVE_SMALL_GORILLA)) {
             if (counters[COUNTER_PROVOCATIONS_ACCU] < 5 && counters[COUNTER_PROVOCATIONS_UNUSED] <= 3 && counters[COUNTER_DEFENSES] == 0) {
                 // 有小猩猩对面没有防御，就出小猩猩
-                adjust(9, 100000);
+                adjust(Player.MOVE_SMALL_GORILLA, 100000);
                 return;
             }
         }
-        if (p2AvailableMoves.contains(11)) {
+        if (p2AvailableMoves.contains(Player.MOVE_FREEZE)) {
             if (counters[COUNTER_PROVOCATIONS_ACCU] <= 5 && counters[COUNTER_DEFENSES] <= 2) {
-                adjust(11, 100000);
+                adjust(Player.MOVE_FREEZE, 100000);
             }
         }
-        if (p2AvailableMoves.contains(12)) {
+        if (p2AvailableMoves.contains(Player.MOVE_LARGE_GORILLA)) {
             if (counters[COUNTER_PROVOCATIONS_ACCU] <= 6 && counters[COUNTER_DEFENSES] <= 2) {
-                adjust(12, 100000);
+                adjust(Player.MOVE_LARGE_GORILLA, 100000);
             }
         }
-        if (!p2AvailableMoves.contains(7) && !p2AvailableMoves.contains(11) && !p2AvailableMoves.contains(12)) {
+        if (!p2AvailableMoves.contains(Player.MOVE_STRAIGHT_PUNCH) 
+            && !p2AvailableMoves.contains(Player.MOVE_FREEZE) 
+            && !p2AvailableMoves.contains(Player.MOVE_LARGE_GORILLA)) {
             // 自己不能出直拳（且不能使用冰冻/大猩猩，更高的暂时不管），减少勾拳，尽量出挑衅
-            adjust(4, -5);
-            adjust(5, -5);
-            adjust(6, -5);
-            adjust(0, 5);
+            adjust(Player.MOVE_UPPERCUT, -5);
+            adjust(Player.MOVE_LEFT_HOOK, -5);
+            adjust(Player.MOVE_RIGHT_HOOK, -5);
+            adjust(Player.MOVE_PROVOCATION, 5);
         }
 
         if (counters[COUNTER_PROVOCATIONS_UNUSED] == 0) {
             // 对面空手，安全出挑衅，不出防御/左右避
-            adjust(0, 100);
-            adjust(7, 10);
-            adjust(1, -8);
-            adjust(2, -5);
-            adjust(3, -5);
+            adjust(Player.MOVE_PROVOCATION, 100);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 10);
+            adjust(Player.MOVE_DEFENSE, -8);
+            adjust(Player.MOVE_LEFT_DODGE, -5);
+            adjust(Player.MOVE_RIGHT_DODGE, -5);
         } else if (counters[COUNTER_PROVOCATIONS_UNUSED] >= 1 
                     && counters[COUNTER_PROVOCATIONS_UNUSED] < 3) {
-            adjust(1, 15);
-            adjust(2, 1);
-            adjust(3, 1);
-            adjust(7, 5);
-            adjust(8, 10);
+            adjust(Player.MOVE_DEFENSE, 15);
+            adjust(Player.MOVE_LEFT_DODGE, 1);
+            adjust(Player.MOVE_RIGHT_DODGE, 1);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 5);
+            adjust(Player.MOVE_REBOUND, 10);
         } else if (counters[COUNTER_PROVOCATIONS_UNUSED] >= 3) {
-            adjust(0, -30);
-            adjust(8, 200);
-            adjust(9, 500);
-            adjust(10, 20);
+            adjust(Player.MOVE_PROVOCATION, -30);
+            adjust(Player.MOVE_REBOUND, 200);
+            adjust(Player.MOVE_SMALL_GORILLA, 500);
+            adjust(Player.MOVE_DOUBLE_DEFENSE, 20);
         }
 
         if (counters[COUNTER_DEFENSES] == 0) {
             // 对面没有防御：打直拳或者上勾拳
-            adjust(4, 10);
-            adjust(7, 25);
+            adjust(Player.MOVE_UPPERCUT, 5);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 25);
         }
         if (counters[COUNTER_DEFENSES] == 1) {
-            adjust(7, -3);
-            adjust(9, -5);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, -3);
+            adjust(Player.MOVE_SMALL_GORILLA, -5);
         } else if (counters[COUNTER_DEFENSES] >= 2) {
-            adjust(7, -3);
-            adjust(9, -5);
-            adjust(11, -10);
-            adjust(12, -10);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, -3);
+            adjust(Player.MOVE_SMALL_GORILLA, -5);
+            adjust(Player.MOVE_FREEZE, -10);
+            adjust(Player.MOVE_LARGE_GORILLA, -10);
         }
 
         switch (this.p1LastRoundMove) {
-            case 0: 
-                adjust(0, -10);
-                adjust(1, 10);
-                adjust(4, 5);
-                adjust(7, 10);
-                adjust(8, 10);
+            case Player.MOVE_PROVOCATION: 
+                adjust(Player.MOVE_PROVOCATION, -10);
+                adjust(Player.MOVE_DEFENSE, 10);
+                adjust(Player.MOVE_UPPERCUT, 5);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 15);
+                adjust(Player.MOVE_REBOUND, 10);
                 break;
-            case 1:
-                adjust(4, 5);
-                adjust(7, -3);
-                adjust(9, -5);
+            case Player.MOVE_DEFENSE:
+                adjust(Player.MOVE_UPPERCUT, 5);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, -3);
+                adjust(Player.MOVE_SMALL_GORILLA, -5);
                 break;
-            case 2:
-            case 3:
+            case Player.MOVE_LEFT_DODGE:
+            case Player.MOVE_RIGHT_DODGE:
                 leftRightPunchUpdate();
                 break;
-            case 7:
-                adjust(4, 4);
-                adjust(7, 6);
+            case Player.MOVE_STRAIGHT_PUNCH:
+                adjust(Player.MOVE_UPPERCUT, 4);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 6);
                 break;
-            case 9: // 刚出小猩猩空窗
-                adjust(0, 15);
-                adjust(4, 3);
-                adjust(7, 10);
+            case Player.MOVE_SMALL_GORILLA: // 刚出小猩猩空窗
+                adjust(Player.MOVE_PROVOCATION, 15);
+                adjust(Player.MOVE_UPPERCUT, 3);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 10);
                 break;
-            case 10:
-                adjust(4, 7);
-                adjust(7, 8);
+            case Player.MOVE_DOUBLE_DEFENSE:
+                adjust(Player.MOVE_UPPERCUT, 7);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 8);
                 break;
-            case 11:
-                adjust(0, 10);  // 趁机挑衅
-                adjust(7, 15);  // 直拳压制
-                adjust(9, 20);  // 小猩猩压制
+            case Player.MOVE_FREEZE:
+                adjust(Player.MOVE_PROVOCATION, 10);  // 趁机挑衅
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 15);  // 直拳压制
+                adjust(Player.MOVE_SMALL_GORILLA, 20);  // 小猩猩压制
                 break;
-            case 12:
-                adjust(0, 10);
-                adjust(7, 15); // 对面出大猩猩己方防住，如果有直拳，就出了偷刀
-                adjust(9, 20);
+            case Player.MOVE_LARGE_GORILLA:
+                adjust(Player.MOVE_PROVOCATION, 10);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 15); // 对面出大猩猩己方防住，如果有直拳，就出了偷刀
+                adjust(Player.MOVE_SMALL_GORILLA, 20);
                 break;
-            case 13:
-                adjust(0, 20);
-                adjust(7, 15);
-                adjust(9, 10);
+            case Player.MOVE_CRITICAL:
+                adjust(Player.MOVE_PROVOCATION, 20);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 15);
+                adjust(Player.MOVE_SMALL_GORILLA, 10);
                 break;
-            case 14:
+            case Player.MOVE_LAYOFF:
                 // 电脑也出了解雇对撞才活着，否则只能出防御
-                adjust(0, 20);
-                adjust(7, 15);
+                adjust(Player.MOVE_PROVOCATION, 20);
+                adjust(Player.MOVE_STRAIGHT_PUNCH, 15);
                 break;
         }
 
@@ -204,38 +206,39 @@ public class ComputerMove {
             && counters[COUNTER_CRITICAL] < 7 
             && counters[COUNTER_LAYOFF] < 10) {
             // 冰冻唯一可能
-            adjust(1, 10);
-            adjust(10, 1000);
-            adjust(11, 10000); // 有冰冻也跟着出冰冻
+            adjust(Player.MOVE_DEFENSE, 10);
+            adjust(Player.MOVE_DOUBLE_DEFENSE, 1000);
+            adjust(Player.MOVE_FREEZE, 10000); // 有冰冻也跟着出冰冻
         } else if (counters[COUNTER_LARGE_GORILLA] >= 6 
                     && counters[COUNTER_CRITICAL] < 7 && counters[COUNTER_LAYOFF] < 10) {
             // 大猩猩可能出现，准备双层防御
-            adjust(10, 1000);
-            adjust(12, 10000); // 有再跟着出
+            adjust(Player.MOVE_DOUBLE_DEFENSE, 1000);
+            adjust(Player.MOVE_LARGE_GORILLA, 10000); // 有再跟着出
         } else if (counters[COUNTER_CRITICAL] >= 7 && counters[COUNTER_LAYOFF] < 10) {
             // 可能出现致命
-            adjust(7, 50); // 直拳偷袭
-            adjust(4, 10);
-            adjust(13, 10000); // 跟着出致命
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 50); // 直拳偷袭
+            adjust(Player.MOVE_UPPERCUT, 10);
+            adjust(Player.MOVE_CRITICAL, 10000); // 跟着出致命
         } else if (counters[COUNTER_PROVOCATIONS_ACCU] >= 7 
                     && counters[COUNTER_CRITICAL] < 7 && counters[COUNTER_LAYOFF] < 10) {
             // 致命与解雇之间的窗口期，可以尝试偷袭
-            adjust(0, 10);
-            adjust(7, 50); // 直拳偷袭，如果有
-            adjust(4, 4);
-            adjust(1, 5);
-            adjust(9, 20);
+            adjust(Player.MOVE_PROVOCATION, 10);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 50); // 直拳偷袭，如果有
+            adjust(Player.MOVE_UPPERCUT, 4);
+            adjust(Player.MOVE_DEFENSE, 5);
+            adjust(Player.MOVE_SMALL_GORILLA, 20);
         } else if (counters[COUNTER_LAYOFF] >= 10) {
             // 对面能出解雇了，有解雇跟着出，否则就自暴自弃直拳偷一下
-            adjust(7, 30);
-            adjust(14, 10000);
+            adjust(Player.MOVE_STRAIGHT_PUNCH, 30);
+            adjust(Player.MOVE_LAYOFF, 10000);
         }
     }
 
     // adjust(moveIndex, amount) accepts a moveIndex (0 to 14 inclusive)
     // updates this.tempWeights[moveIndex] to max(1, this.tempWeights[moveIndex] + amount)
     public void adjust(int moveIndex, int amount) {
-        if (moveIndex < 0 || moveIndex > 14) {
+        if (moveIndex < Player.MOVE_PROVOCATION || moveIndex > Player.MOVE_LAYOFF) {
+            // moveIndex not in 0-14
             return;
         }
         this.tempWeights[moveIndex] += amount;
@@ -248,8 +251,8 @@ public class ComputerMove {
     // increments by 1 with a limit of 4
     // this method is for a learning AI (usually left and right dodges are rarely used)
     public static void leftRightPunchUpdate() {
-        ComputerMove.moveWeights[5] += ComputerMove.moveWeights[5] >= 4 ? 0 : 1;
-        ComputerMove.moveWeights[6] += ComputerMove.moveWeights[6] >= 4 ? 0 : 1;
+        ComputerMove.moveWeights[Player.MOVE_LEFT_HOOK] += ComputerMove.moveWeights[Player.MOVE_LEFT_HOOK] >= 4 ? 0 : 1;
+        ComputerMove.moveWeights[Player.MOVE_RIGHT_HOOK] += ComputerMove.moveWeights[Player.MOVE_RIGHT_HOOK] >= 4 ? 0 : 1;
     }
 
 }
