@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>波波挑衅 Bobo Provocation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="title">
+        <h1>波波挑衅</h1>
+        <p class="subtitle">Created by sishuo</p>
+        <div class="start-row">
+            <div class="toggle-column">
+                <button class="toggle-button" id="ai-difficulty-toggle" onclick="toggleAIDifficulty()">简单难度</button>
+                <button class="toggle-button" id="mode-toggle" onclick="toggleMode()">普通模式</button>
+            </div>
+            <button id="start" onclick="startGame()">开始游戏</button>
+        </div>
+    </div>
+    
+    <div class="main-game-container">
+        <div class="game-dashboard">
+            <div class="player-panels">
+                <div class="panel p1-panel">
+                    <h3>你 (Player 1)</h3>
+                    <div class="status-badge" id="p1-status">准备就绪</div>
+                </div>
+
+                <div class="vs-sign">VS</div>
+
+                <div class="panel p2-panel">
+                    <h3>电脑 (Player 2)</h3>
+                    <div class="status-badge" id="p2-status">准备就绪</div>
+                </div>
+            </div>
+
+            <div class="bobo-reveal">
+                <div class="reveal-row">
+                    <div>你的选择->   <span class = "action-billboard" id="p1-action-billboard"> ? </span></div>
+                    <div class="vs-small">||</div>
+                    <div><span class = "action-billboard" id="p2-action-billboard"> ? </span>   <-电脑出招</div>
+                </div>
+            </div>
+
+            <div class="battle-log-screen">
+                <div id="battle-log-text">欢迎来到"波波挑衅"！点击按钮即可开始游戏！</div>
+            </div>
+        </div>
+
+        <div class = "buttons-container">
+            <div class="btn-row">
+                <button id="Button2" class="move-btn btn-dodge" onclick="makeMove(2)" disabled>左避</button>
+                <button id="Button0" class="move-btn" onclick="makeMove(0)" disabled>挑衅</button>
+                <button id="Button1" class="move-btn" onclick="makeMove(1)" disabled>防御</button>
+                <button id="Button3" class="move-btn btn-dodge" onclick="makeMove(3)" disabled>右避</button>
+            </div>
+
+            <div class="btn-row">
+                <button id="Button5" class="move-btn btn-punch" onclick="makeMove(5)" disabled>左勾拳</button>
+                <button id="Button7" class="move-btn btn-punch" onclick="makeMove(7)" disabled>直拳</button>
+                <button id="Button4" class="move-btn btn-punch" onclick="makeMove(4)" disabled>上勾拳</button>
+                <button id="Button6" class="move-btn btn-punch" onclick="makeMove(6)" disabled>右勾拳</button>
+            </div>
+
+            <div class="btn-row">
+                <button id="Button8" class="move-btn btn-special" onclick="makeMove(8)" disabled>反弹</button>
+                <button id="Button9" class="move-btn btn-special" onclick="makeMove(9)" disabled>小猩猩</button>
+                <button id="Button10" class="move-btn btn-special" onclick="makeMove(10)" disabled>双层防御</button>
+            </div>
+
+            <div class="btn-row">
+                <button id="Button11" class="move-btn btn-ultimate" onclick="makeMove(11)" disabled>冰冻</button>
+                <button id="Button12" class="move-btn btn-ultimate" onclick="makeMove(12)" disabled>大猩猩</button>
+                <button id="Button13" class="move-btn btn-ultimate" onclick="makeMove(13)" disabled>致命一击</button>
+                <button id="Button14" class="move-btn btn-illegal" onclick="makeMove(14)" disabled>解雇</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
